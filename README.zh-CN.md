@@ -588,6 +588,8 @@ LiveLog-AI/
 | `/api/ota/*`            | *    | OTA 自动更新                        |
 | `/mobile`               | GET  | App WebView 前端页面                |
 
+> 完整数据格式文档见 [docs/DATA_FORMAT.md](docs/DATA_FORMAT.md)
+
 ---
 
 ## 常见问题
