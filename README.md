@@ -1,72 +1,74 @@
 # LiveLog-AI
 
-自托管的 AI 个人数据助理。通过 Android App 持续采集手机和手环传感器数据（心率、步数、GPS、音频环境、通知、屏幕状态等），上传至私有后端存储，由 OpenCode AI 定时分析并生成洞察报告。
+**English** | [中文](README.zh-CN.md)
 
-不是单纯的健康追踪工具，而是一个**持续运行、主动理解你的 AI 代理**：它学习你的作息规律、监测异常变化、在每天结束时告诉你今天过得怎么样，全部运行在你自己的服务器上。
+A self-hosted AI personal data assistant. An Android app continuously collects sensor data from your phone and smart band (heart rate, steps, GPS, ambient audio, notifications, screen state, and more), uploads it to your private backend, where OpenCode AI periodically analyzes everything and generates insight reports.
 
-**适用场景**：个人生活数据归档、AI 日报/周报、行为模式分析、异常检测预警。
+This is not just another health tracker. It is a **continuously running AI agent that learns about you**: your daily rhythms, your behavioral patterns, your anomalies. At the end of each day, it tells you how your day went. All running on your own server.
 
-> **现状说明**：本项目处于初期阶段。作者忙于学业，但系统本人一直在使用，运行稳定。可能存在历史遗留问题和兼容性缺陷。目前仅在 Windows 平台测试，Linux 和 macOS 理论上可以运行但未经测试。前端（Vue SPA）存在较多交互 bug，可能影响使用体验。
+**Use cases**: personal life data archiving, AI daily/weekly reports, behavioral pattern analysis, anomaly detection and alerting.
+
+> **Project status**: Early stage. The author is busy with studies, but the system runs daily and is stable. There may be legacy issues and compatibility gaps. Currently only tested on Windows. Linux and macOS may work but are untested. The frontend (Vue SPA) has several interaction bugs that may affect the user experience.
 >
-> **关于 AI 能力**：不要幻想 AI 能有多懂你。本项目的声音处理精度有限，不要指望靠不太靠谱的 ASR 和声纹就能准确判断你的场景和行为。也无法感知到伸懒腰、打哈欠、精神状态、情绪这些细微的生活细节。但这不代表系统不能用——在大量数据积累下，AI 仍然可以分析出你的行为习惯、出行规律、交流风格和做事倾向。
+> **On AI capabilities**: Do not expect the AI to truly understand you. Audio processing is limited. Do not rely on the imperfect ASR and speaker recognition to accurately determine your context and activities. The system cannot perceive stretching, yawning, mental state, emotions, or other subtle details of daily life. That said, the system is still useful. With enough accumulated data, the AI can analyze your behavioral habits, movement patterns, communication style, and tendencies.
 
 ---
 
-## 系统架构
+## Architecture
 
 ```mermaid
 graph TB
-    subgraph DataSources[数据源]
-        BAND[小米手环] -->|BLE| GB[Gadgetbridge<br/>SQLite DB]
-        PHONE[手机传感器<br/>GPS/麦克风/屏幕]
-        PC[Windows PC<br/>待机状态/前台窗口]
+    subgraph DataSources[Data Sources]
+        BAND[Xiaomi Band] -->|BLE| GB[Gadgetbridge<br/>SQLite DB]
+        PHONE[Phone Sensors<br/>GPS/Mic/Screen]
+        PC[Windows PC<br/>Idle state/Foreground window]
     end
 
-    subgraph AppCollect[Android App - 采集层]
-        HDC[HealthDataCollector<br/>读 Gadgetbridge 数据库]
+    subgraph AppCollect[Android App - Collection Layer]
+        HDC[HealthDataCollector<br/>Reads Gadgetbridge DB]
         SENSORS[AudioCollector / GpsCollector<br/>SystemStateCollector / NotificationCollector]
-        UPLOAD[AppHttpClient<br/>HTTPS 上传]
+        UPLOAD[AppHttpClient<br/>HTTPS Upload]
     end
 
-    subgraph Backend[后端 - FastAPI]
-        AUTH[AuthMiddleware<br/>Token 认证]
-        HEALTH["/api/health/*<br/>健康数据同步/查询"]
-        PERCEPTION["/api/perception/*<br/>感知数据接收"]
-        TTS["/api/screen/tts/*<br/>语音合成"]
-        SESSION["/api/screen/session/*<br/>会话管理/SSE流"]
-        STORE["文件存储<br/>ai/data/{date}/"]
-        GATEWAY[OpenCode Gateway<br/>AI 调用桥接]
-        TASK[任务调度引擎<br/>定时触发/脚本执行]
+    subgraph Backend[Backend - FastAPI]
+        AUTH[AuthMiddleware<br/>Token Auth]
+        HEALTH["/api/health/*<br/>Health data sync/query"]
+        PERCEPTION["/api/perception/*<br/>Perception data ingestion"]
+        TTS["/api/screen/tts/*<br/>Text-to-Speech"]
+        SESSION["/api/screen/session/*<br/>Session management/SSE"]
+        STORE["File Storage<br/>ai/data/{date}/"]
+        GATEWAY[OpenCode Gateway<br/>AI call bridge]
+        TASK[Task Scheduler<br/>Cron triggers/script execution]
     end
 
-    subgraph Frontend[前端 - Vue 3 SPA]
-        DASH[Dashboard 健康看板]
-        REPT[Reports 分析报告]
-        SETT[Settings 设置页]
+    subgraph Frontend[Frontend - Vue 3 SPA]
+        DASH[Dashboard]
+        REPT[Reports]
+        SETT[Settings]
     end
 
-    subgraph AISystem[AI 分析 - OpenCode 核心]
-        AI[OpenCode 服务<br/>AI 模型推理]
-        DC[数据检查<br/>每 2 小时]
-        DR[每日复盘<br/>每天 21:00]
-        WR[周报/双周回顾]
-        AD[异常检测]
-        NOTIFY[通知推送]
+    subgraph AISystem[AI Analysis - OpenCode Core]
+        AI[OpenCode Service<br/>AI Model Inference]
+        DC[Data Check<br/>Every 2 hours]
+        DR[Daily Review<br/>Daily at 21:00]
+        WR[Weekly/Biweekly Report]
+        AD[Anomaly Detection]
+        NOTIFY[Push Notification]
     end
 
-    GB -->|读 SQLite| HDC
+    GB -->|Read SQLite| HDC
     PHONE --> SENSORS
     PC -.->|WebSocket| PERCEPTION
 
     HDC --> UPLOAD
     SENSORS --> UPLOAD
 
-    UPLOAD <-->|上传/查询| HEALTH
-    UPLOAD -->|上传| PERCEPTION
-    UPLOAD -->|请求TTS| TTS
-    TTS -->|返回音频| UPLOAD
+    UPLOAD <-->|Upload/Query| HEALTH
+    UPLOAD -->|Upload| PERCEPTION
+    UPLOAD -->|TTS Request| TTS
+    TTS -->|Audio Response| UPLOAD
 
-    UPLOAD <-->|会话消息/SSE流| SESSION
+    UPLOAD <-->|Session messages/SSE| SESSION
     SESSION <--> GATEWAY
 
     HEALTH --> STORE
@@ -83,107 +85,107 @@ graph TB
     DR --> NOTIFY
     WR --> NOTIFY
     AD --> NOTIFY
-    NOTIFY -->|推送| UPLOAD
+    NOTIFY -->|Push| UPLOAD
 ```
 
-### 数据流
+### Data Flow
 
 ```mermaid
 sequenceDiagram
-    participant B as 小米手环
+    participant B as Xiaomi Band
     participant G as Gadgetbridge
     participant A as Axeuh App
-    participant S as 后端服务器
+    participant S as Backend Server
     participant AI as OpenCode AI
-    participant T as TTS语音
+    participant T as TTS
 
-    B->>G: BLE 连接
-    G->>G: SQLite 数据库
+    B->>G: BLE Connection
+    G->>G: SQLite Database
     G->>A: Intent TRIGGER_EXPORT
-    A->>G: 读取 Gadgetbridge.db
-    G-->>A: 心率/步数/血氧/睡眠
+    A->>G: Read Gadgetbridge.db
+    G-->>A: Heart rate / Steps / SpO2 / Sleep
 
-    Note over A,S: HTTPS 双向通信
+    Note over A,S: HTTPS Bidirectional
 
     A->>S: POST /api/health/sync
     A->>S: POST /api/perception/{type}
-    S->>S: 存储到 ai/data/{date}/
+    S->>S: Store to ai/data/{date}/
 
-    alt AI 分析已启用
-        S->>AI: 调用分析任务
-        AI->>AI: 数据检查 / 日报 / 周报
-        AI-->>S: 分析结果
-        S-->>A: 推送通知推送分析结果
+    alt AI Analysis Enabled
+        S->>AI: Trigger analysis task
+        AI->>AI: Data check / Daily report / Weekly report
+        AI-->>S: Analysis results
+        S-->>A: Push notification with results
     end
 
-    alt TTS 播报
+    alt TTS Playback
         S->>T: /api/screen/tts/speak
-        T->>S: 语音合成完成
-        S-->>A: 音频播放指令
+        T->>S: Speech synthesis complete
+        S-->>A: Audio playback instruction
     end
 ```
 
 ---
 
-## 先决条件
+## Prerequisites
 
-| 项目   | 要求                                                      |
-| ------ | --------------------------------------------------------- |
-| 服务器 | 任意可运行 Python 3.10+ 的机器（Windows / Linux / macOS） |
-| 手机   | Android 8.0+（API 26），建议 12GB+ 存储空间               |
-| 手环   | 小米手环 8 Pro / 9 Pro（或其他 Gadgetbridge 支持的型号）  |
-| 核心   | OpenCode + Oh My OpenAgent + opencode-dcp 插件            |
+| Item      | Requirement                                                    |
+| --------- | -------------------------------------------------------------- |
+| Server    | Any machine running Python 3.10+ (Windows / Linux / macOS)    |
+| Phone     | Android 8.0+ (API 26), 12GB+ storage recommended              |
+| Band      | Xiaomi Band 8 Pro / 9 Pro (or other Gadgetbridge-supported model) |
+| Core      | OpenCode + Oh My OpenAgent + opencode-dcp plugin              |
 
-## 模型依赖
+## Model Dependencies
 
-本项目依赖多种 AI 模型，分为核心 LLM 和可选音频 ML 模型两类。
+The project depends on several AI models, split into a required LLM and optional audio ML models.
 
-### 核心 LLM（必须，由 OpenCode 调用）
+### Core LLM (Required, invoked by OpenCode)
 
-| 模型              | 用途                | 提供商   | 配置位置                                      |
-| ----------------- | ------------------- | -------- | --------------------------------------------- |
-| deepseek-v4-flash | AI 分析推理默认模型 | DeepSeek | `config.yaml` → `opencode.default_model` |
+| Model              | Purpose                 | Provider     | Configuration                           |
+| ------------------ | ----------------------- | ------------ | --------------------------------------- |
+| deepseek-v4-flash  | Default AI reasoning    | DeepSeek     | `config.yaml` -> `opencode.default_model` |
 
-OpenCode 支持所有兼容 OpenAI API 的模型提供商（DeepSeek、Anthropic、OpenAI 等），可在 `backend/config/model_config.json` 或 OpenCode 配置中切换。
+OpenCode supports any OpenAI-compatible model provider (DeepSeek, Anthropic, OpenAI, etc). Switch models in `backend/config/model_config.json` or OpenCode configuration.
 
-### 音频 ML 模型（可选，增强音频分析能力）
+### Audio ML Models (Optional, enhance audio analysis)
 
-安装命令：`pip install torch torchaudio funasr modelscope`
+Install with: `pip install torch torchaudio funasr modelscope`
 
-| 模型                                                            | 用途                                | 来源                | 首次加载              |
-| --------------------------------------------------------------- | ----------------------------------- | ------------------- | --------------------- |
-| **SenseVoiceSmall** (`iic/SenseVoiceSmall`)             | 多语言语音识别 ASR（中/英/日/粤等） | ModelScope / funasr | 自动下载，约 1-3 分钟 |
-| **emotion2vec_plus_base** (`iic/emotion2vec_plus_base`) | 语音情绪识别（开心/悲伤/愤怒等）    | ModelScope / funasr | 自动下载              |
-| **PANNs Cnn14_16k**                                       | 环境声分类（527 类 AudioSet 标签）  | Zenodo 自动下载     | 自动下载，约 200MB    |
-| **Silero VAD**                                            | 语音活动检测（VAD，语音预分段）     | silero_vad 包       | pip 时已包含          |
-| **funasr ERes2NetV2**                                     | 声纹嵌入提取（说话人识别）          | funasr / modelscope | 自动下载              |
+| Model                                                         | Purpose                                         | Source              | First Load                |
+| ------------------------------------------------------------- | ------------------------------------------------ | ------------------- | ------------------------- |
+| **SenseVoiceSmall** (`iic/SenseVoiceSmall`)           | Multilingual ASR (Chinese/English/Japanese/Cantonese etc.) | ModelScope / funasr | Auto-download, ~1-3 min |
+| **emotion2vec_plus_base** (`iic/emotion2vec_plus_base`) | Speech emotion recognition (happy/sad/angry etc.) | ModelScope / funasr | Auto-download            |
+| **PANNs Cnn14_16k**                                        | Environmental sound classification (527 AudioSet labels) | Zenodo auto-download | Auto-download, ~200MB  |
+| **Silero VAD**                                             | Voice Activity Detection (pre-segment speech)     | silero_vad package  | Included with pip         |
+| **funasr ERes2NetV2**                                      | Speaker embedding extraction (speaker recognition) | funasr / modelscope | Auto-download            |
 
-上述模型不安装不影响后端启动，仅音频分析、声纹识别、场景感知功能降级。TTS 如需替换为本地或其他服务，可自行实现 `backend/services/tts_player.py`。
+Without these models, the backend still starts fine. Audio analysis, speaker recognition, and scene awareness features will be degraded. TTS can be swapped by implementing `backend/services/tts_player.py`.
 
-### 其他
+### Other
 
-| 功能         | 依赖                      | 说明                                      |
-| ------------ | ------------------------- | ----------------------------------------- |
-| 说话人日志   | librosa + sklearn + numpy | 纯算法实现（MFCC + 层次聚类），无外部模型 |
-| TTS 语音合成 | MiMo 云端 API             | 非本地模型，需 `api.mimo_key`           |
+| Feature         | Dependency                    | Notes                                               |
+| --------------- | ----------------------------- | --------------------------------------------------- |
+| Speaker diarization | librosa + sklearn + numpy | Pure algorithm (MFCC + hierarchical clustering), no external model |
+| TTS synthesis   | MiMo Cloud API                | Not a local model, requires `api.mimo_key`          |
 
 ---
 
-## 安装步骤
+## Installation
 
-### 第一阶段：后端部署
+### Phase 1: Backend
 
-#### 1.1 克隆仓库
+#### 1.1 Clone
 
 ```bash
 git clone https://github.com/Axeuh/LiveLog-AI.git
 cd LiveLog-AI
 ```
 
-#### 1.2 Python 环境
+#### 1.2 Python environment
 
 ```bash
-# 推荐使用 conda 或 venv 创建独立环境
+# Create a virtual environment (conda or venv)
 python -m venv venv
 # Windows: venv\Scripts\activate
 # Linux:   source venv/bin/activate
@@ -191,87 +193,87 @@ python -m venv venv
 pip install -r backend/requirements.txt
 ```
 
-如需声纹识别等 ML 功能，额外安装：
+For ML features like speaker recognition:
 
 ```bash
 pip install torch torchaudio --index-url https://download.pytorch.org/whl/cu124
 pip install funasr modelscope
-# 或一条命令：
+# Or with one command:
 pip install -e ".[ml]"
 ```
 
-#### 1.3 配置
+#### 1.3 Configuration
 
-编辑项目根目录的 `config.yaml`，以下字段必须填写：
+Edit `config.yaml` in the project root. These fields are required:
 
 ```yaml
 auth:
-  username: admin                    # 登录用户名
-  password_hash: ""                  # 必须：bcrypt 密码哈希（见下方生成方法）
+  username: admin                    # Login username
+  password_hash: ""                  # Required: bcrypt password hash (see below)
 
 ssl:
-  enabled: true                      # HTTPS 开关（Android App 需要 HTTPS）
-  cert: /path/to/your/cert.pem       # 请填入实际路径
-  key:  /path/to/your/key.pem        # 请填入实际路径
+  enabled: true                      # HTTPS toggle (Android App requires HTTPS)
+  cert: /path/to/your/cert.pem       # Replace with actual path
+  key:  /path/to/your/key.pem        # Replace with actual path
 ```
 
-**生成 password_hash**：
+**Generate password_hash**:
 
 ```bash
-python -c "import bcrypt; print(bcrypt.hashpw(b'你的密码', bcrypt.gensalt()).decode())"
+python -c "import bcrypt; print(bcrypt.hashpw(b'your_password', bcrypt.gensalt()).decode())"
 ```
 
-把输出的哈希值填入 `config.yaml` 的 `password_hash` 字段。
+Copy the output hash into `config.yaml` under `password_hash`.
 
-> 如果 `password_hash` 为空且 `backend/config/auth.json` 不存在，服务启动时会直接崩溃。这是为了防止无密码暴露。
+> If `password_hash` is empty and no `backend/config/auth.json` exists, the server will crash on startup. This is intentional to prevent deploying without a password.
 
-#### 1.4 SSL 证书（Android App 必须）
+#### 1.4 SSL Certificate (Android App requires this)
 
-Android App 强制使用 HTTPS。开发环境可用自签名证书：
+The Android App enforces HTTPS. For development, use a self-signed certificate:
 
 ```bash
-# 生成自签名证书（有效期 365 天）
+# Generate a self-signed certificate (365-day validity)
 openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem \
-  -days 365 -nodes -subj "/CN=<你的服务器IP或域名>"
+  -days 365 -nodes -subj "/CN=<YOUR_SERVER_IP_OR_DOMAIN>"
 
-# 将 cert.pem / key.pem 路径填入 config.yaml 的 ssl.cert / ssl.key
+# Set ssl.cert / ssl.key in config.yaml to the generated files
 ```
 
-Android App 首次连接自签名服务器时，需在浏览器中打开 `https://<你的IP>:<端口>/health` 并信任证书。也可将 `cert.pem` 导入 Android 信任存储。
+When connecting to a self-signed server for the first time, open `https://<YOUR_IP>:<PORT>/health` in a browser on the Android device and accept the certificate. Alternatively, import `cert.pem` into the Android trust store.
 
-**生产环境请使用受信任 CA 签发的证书**（如 Let's Encrypt）。
+**For production, use a CA-trusted certificate** (e.g., Let's Encrypt).
 
-#### 1.5 第三方 API Key（可选）
+#### 1.5 Third-party API Key (Optional)
 
 ```yaml
 api:
-  mimo_key: YOUR_MIMO_API_KEY        # 小米 MiMo API，用于 TTS 语音合成
-  # 获取: https://mimo.xiaomi.com/
+  mimo_key: YOUR_MIMO_API_KEY        # Xiaomi MiMo API for TTS synthesis
+  # Get one at: https://mimo.xiaomi.com/
 ```
 
-缺省 `mimo_key` 不影响核心功能，仅 TTS 端点不可用。
+Without `mimo_key`, core features still work. Only TTS endpoints are unavailable.
 
-#### 1.6 启动后端
+#### 1.6 Start the Backend
 
 ```bash
-# 方式一：统一启动器（推荐，自动读取 config.yaml）
+# Option 1: Unified launcher (recommended, reads config.yaml automatically)
 python launcher.py
 
-# 方式二：仅启动后端（开发模式，HTTP 8768）
+# Option 2: Backend only (dev mode, HTTP on 8768)
 cd backend && python -m uvicorn main:app --reload --port 8768
 
-# 方式三：Windows 一键启动
+# Option 3: Windows one-click
 start.bat
 ```
 
-验证后端运行：
+Verify:
 
 ```bash
 curl http://127.0.0.1:8768/health
 # {"status":"healthy"}
 ```
 
-#### 1.7 Launcher 路径配置（如使用 launcher.py）
+#### 1.7 Launcher Path Configuration (if using launcher.py)
 
 ```yaml
 launcher:
@@ -279,219 +281,219 @@ launcher:
   opencode_cmd: C:\Users\Administrator\AppData\Roaming\npm\opencode.cmd
 ```
 
-如果未配置或路径错误，launcher 会自动回退到系统 Python 和 `shutil.which('opencode')`。
+If paths are unset or incorrect, the launcher falls back to system Python and `shutil.which('opencode')`.
 
 ---
 
-### 第二阶段：前端
+### Phase 2: Frontend
 
-前端已预构建，`frontend/mobile/dist/` 目录已包含编译产物，后端会自动在 `/mobile/` 路径下提供。
+The frontend is pre-built. The compiled output lives in `frontend/mobile/dist/` and is served automatically by the backend at the `/mobile/` path.
 
-**无需额外操作。** 后端运行后访问 `https://<服务器IP>:<端口>/mobile/` 即可看到健康看板页面（开发模式 HTTP 亦可）。
+**No extra steps required.** After starting the backend, visit `https://<SERVER_IP>:<PORT>/mobile/` in a browser (HTTP also works in dev mode).
 
-如需自行构建：
+To build from source:
 
 ```bash
 cd frontend/mobile
 npm install
-npm run build    # 输出到 dist/
+npm run build    # Outputs to dist/
 ```
 
 ---
 
-### 第三阶段：Android App 安装
+### Phase 3: Android App
 
-从 [GitHub Releases](https://github.com/Axeuh/LiveLog-AI/releases) 下载最新 APK，或自行编译：
+Download the latest APK from [GitHub Releases](https://github.com/Axeuh/LiveLog-AI/releases), or build it yourself:
 
 ```bash
-# 编译 Debug APK
+# Build Debug APK
 cd app
 ../gradlew assembleDebug
-# 产物: app/build/outputs/apk/debug/app-debug.apk
+# Output: app/build/outputs/apk/debug/app-debug.apk
 ```
 
-编译要求（自行编译时）：
+Build requirements (if building from source):
 
-- Android Studio Hedgehog (2023.1)+ 或命令行 Gradle
+- Android Studio Hedgehog (2023.1)+ or Gradle CLI
 - JDK 17
 - Android SDK 36
 
 ---
 
-### 第四阶段：手机端配置
+### Phase 4: Phone Setup
 
-此阶段需要在手机上逐步操作。
+This phase requires hands-on work on your phone.
 
-#### 4.1 安装并打开 App
+#### 4.1 Install and Open the App
 
-1. 将 APK 传输到手机安装
-2. 打开 App → 进入设置页面（首次启动自动跳转）
+1. Transfer the APK to your phone and install it
+2. Open the app. The settings page will open automatically on first launch
 
-#### 4.2 配置服务器地址
+#### 4.2 Configure Server Address
 
-在设置页的 **服务器地址** 字段填入：
+In the Settings page, fill in the **Server Address** field:
 
 ```
-https://<你的服务器IP>:<端口>
+https://<YOUR_SERVER_IP>:<PORT>
 ```
 
-- 局域网：`https://192.168.x.x:<端口>`（端口与 config.yaml 中 `https_port` 一致）
-- 公网：`https://你的域名:<端口>`
-- 本地测试：`https://localhost:8767`（Android App 默认端口）
+- LAN: `https://192.168.x.x:<PORT>` (port matches `https_port` in config.yaml)
+- Public network: `https://your-domain.com:<PORT>`
+- Local test: `https://localhost:8767` (Android App default)
 
-点击"保存并测试连接"，等待显示"连接成功"。
+Tap **Save and Test Connection** and wait for "Connection successful".
 
-#### 4.3 登录
+#### 4.3 Login
 
-输入用户名和密码（即 `config.yaml` 中配置的账号密码），点击登录。登录成功后 token 会自动保存。
+Enter the username and password (matching `config.yaml`). After successful login, the token is saved automatically.
 
-#### 4.4 授予权限
+#### 4.4 Grant Permissions
 
-根据提示依次授予权限，每项都有弹窗指引：
+Follow the prompts to grant each permission. Each step has an in-app guide:
 
-| 权限               | 用途                     | Android 版本注意             |
-| ------------------ | ------------------------ | ---------------------------- |
-| 通知监听权限       | 采集通知统计             | 手动在系统设置中开启         |
-| 麦克风权限         | 环境音录音分析           | 弹窗授予                     |
-| GPS 定位权限       | 位置轨迹                 | 弹窗授予（建议选"始终允许"） |
-| 存储权限           | 读取 Gadgetbridge 数据库 | 弹窗授予                     |
-| 无障碍服务         | 前台应用/屏幕状态感知    | 手动在系统设置中开启         |
-| 后台弹出界面       | 通知显示                 | 小米/OPPO 等需要额外允许     |
-| 省电策略 → 无限制 | 防止 Service 被杀死      | 小米/OPPO 等必须设置         |
+| Permission                | Purpose                             | Notes                        |
+| ------------------------- | ----------------------------------- | ---------------------------- |
+| Notification listener     | Collect notification stats          | Enable manually in system settings |
+| Microphone                | Ambient audio recording and analysis | Dialog prompt                |
+| GPS location              | Location tracking                   | Dialog prompt (recommend "Allow all the time") |
+| Storage                   | Read Gadgetbridge database          | Dialog prompt                |
+| Accessibility service     | Foreground app / screen state       | Enable manually in system settings |
+| Display pop-ups           | Show notifications                  | Extra step for Xiaomi/OPPO   |
+| Battery optimization -> unrestricted | Prevent Service from being killed | Required on Xiaomi/OPPO/Huawei |
 
-> **小米/红米手机注意**：在"最近任务"界面将 App 锁定（下拉卡片出现锁图标），防止系统清理后台。
+> **Xiaomi/Redmi users**: Lock the app in the recent tasks screen (pull down on the card until a lock icon appears) to prevent the system from clearing it.
 
-#### 4.5 确认 App 运行
+#### 4.5 Verify
 
-返回 App 主界面，查看状态栏是否显示"传感器运行中"。设置页的传感器预览区应能看到实时更新的传感器数据。
+Return to the main screen. The status bar should show "Sensors running". The sensor preview area in Settings should display live data.
 
 ---
 
-### 第五阶段：手环健康数据配置（Gadgetbridge）
+### Phase 5: Band Health Data (Gadgetbridge)
 
-健康数据（心率、步数、血氧、压力、睡眠）通过 **Gadgetbridge**（开源第三方 App）从手环获取。
+Health data (heart rate, steps, SpO2, stress, sleep stages) comes from your band through **Gadgetbridge**, an open-source third-party app.
 
-#### 5.1 安装 Gadgetbridge
+#### 5.1 Install Gadgetbridge
 
-从 F-Droid 下载安装：https://f-droid.org/packages/nodomain.freeyourgadget.gadgetbridge/
+From F-Droid: https://f-droid.org/packages/nodomain.freeyourgadget.gadgetbridge/
 
-备选：从 GitHub Releases 下载 APK：https://github.com/Freeyourgadget/Gadgetbridge/releases
+Alternative: GitHub Releases: https://github.com/Freeyourgadget/Gadgetbridge/releases
 
-> 不要从 Google Play 安装，F-Droid 或 GitHub 版本更新更快。
+> Do not install from Google Play. The F-Droid or GitHub versions are updated much faster.
 
-#### 5.2 配对手环
+#### 5.2 Pair the Band
 
-首次打开 Gadgetbridge 后扫描并配对手环。
+Open Gadgetbridge and scan for your band.
 
-**关于 Auth Key**：小米手环 8 Pro / 9 Pro 需要 32 位十六进制 Auth Key 才能连接。获取方法：
+**About the Auth Key**: Xiaomi Band 8 Pro and 9 Pro require a 32-character hexadecimal Auth Key to connect. Here is how to obtain one:
 
-1. 安装 **小米运动健康（Mi Fitness）**App（版本需低于 3.36，高版本无法提取到 key），正常连接手环并使用至少一次
-2. 开启手机的 **USB 调试**，连接电脑执行：
+1. Install the official **Mi Fitness** app (version must be below 3.36; newer versions cannot extract the key). Connect your band normally and use it at least once.
+2. Enable **USB debugging** on your phone and connect it to a computer, then run:
    ```
    adb shell
    cd /storage/emulated/0/Android/data/com.mi.health/files/log/
    cat Transfer.device.log | grep token
    ```
-3. 日志中能找到两个 token：**小米账号 token** 和 **手环 Auth Key**（32 位十六进制字符串）-- 后者才是 Gadgetbridge 配对需要的
-4. 两种 token 都试试，Auth Key 通常在 Gadgetbridge 配对界面输入
-5. 如果 Mi Fitness 版本过高无法提取，请自行搜索其他获取攻略（米坛、B站等平台有教程）
+3. The log contains two tokens: your **Mi Account token** and the **band Auth Key** (a 32-character hex string). The latter is what Gadgetbridge needs for pairing.
+4. Try both tokens if unsure. The Auth Key is the one you enter in the Gadgetbridge pairing screen.
+5. If your Mi Fitness version is too new and cannot extract the key, search for alternative methods on Chinese forums like Mitan or Bilibili.
 
-> 首次配对手环时需要 Auth Key，配对成功后除非解除绑定，否则不再需要。
+> The Auth Key is only needed for initial pairing. Once paired, you will not need it again unless you unbind the band.
 
-#### 5.3 配置自动导出数据库
-
-```
-Gadgetbridge 设置 → 自动化
-  ├─ 自动导出数据库 → 开启
-  ├─ 导出路径 → 保持默认（/storage/emulated/0/Gadgetbridge.db）
-  └─ 点击右上角"立即运行自动导出" → 测试导出是否正常工作
-```
-
-#### 5.4 开启 Intent API（可选但推荐）
+#### 5.3 Enable Auto-Export
 
 ```
-Gadgetbridge 设置 → 开发者选项 → 意图接口
-  ├─ 允许活动同步触发器        → 开启
-  ├─ 活动同步完成时广播        → 开启
-  ├─ 允许数据库导出           → 开启
-  └─ 数据库导出时广播          → 开启
+Gadgetbridge Settings -> Automation
+  |- Auto export database -> ON
+  |- Export path -> Keep default (/storage/emulated/0/Gadgetbridge.db)
+  |- Tap "Run auto export now" (top-right menu) -> Verify it works
 ```
 
-开启后，Axeuh App 的后台 Service 可发送广播主动触发 Gadgetbridge 导出数据库，实现**自动定时采集**（约 5 分钟一次），无需等待 Gadgetbridge 自身的一小时间隔。
-
-#### 5.5 在 App 中设置数据库路径
+#### 5.4 Enable Intent API (Recommended)
 
 ```
-Axeuh App 设置 → 数据采集 → 手环数据库路径
-  → 选择 /storage/emulated/0/Gadgetbridge.db
+Gadgetbridge Settings -> Developer options -> Intent API
+  |- Allow activity sync trigger        -> ON
+  |- Broadcast after activity sync      -> ON
+  |- Allow database export              -> ON
+  |- Broadcast after database export    -> ON
 ```
 
-如果路径正确，下方健康数据状态区域将显示心率/步数等数据。点击"立即同步数据"可手动测试。
+With this enabled, the Axeuh App background service can broadcast an intent to trigger Gadgetbridge to export its database on demand, achieving **automatic periodic collection** (roughly every 5 minutes) instead of waiting for Gadgetbridge's built-in one-hour interval.
 
-#### 5.6 禁用小米运动健康后台（关键！）
-
-两个 App 会互相抢 BLE 连接，导致 Gadgetbridge 频繁断连。**必须禁止小米运动健康自动连接手环：**
+#### 5.5 Set Database Path in the App
 
 ```
-手机设置 → 应用管理 → 小米运动健康
-  → 自启动 → 关闭
-  → 省电策略 → 限制后台
-  → 权限 → 附近设备 → 拒绝（或在系统设置中禁止蓝牙扫描）
-
-如果手环取消了与小米运动健康的配对：
-  → 蓝牙设置 → 找到小米手环 → 取消配对/忽略设备
+Axeuh App Settings -> Data Collection -> Band database path
+  -> Select /storage/emulated/0/Gadgetbridge.db
 ```
 
-做完后，只有 Gadgetbridge 会连接手环，数据采集稳定。
+If the path is correct, the health data status section below will show heart rate, steps, and other values. Tap "Sync data now" to test manually.
+
+#### 5.6 Disable Mi Fitness Background (Critical)
+
+Both apps will fight for the BLE connection, causing Gadgetbridge to disconnect constantly. **You must prevent Mi Fitness from connecting to the band automatically:**
+
+```
+Phone Settings -> App Management -> Mi Fitness
+  -> Auto-start -> OFF
+  -> Battery optimization -> Restricted
+  -> Permissions -> Nearby devices -> DENY (or disable Bluetooth scanning in system settings)
+
+If the band is already unpaired from Mi Fitness:
+  -> Bluetooth settings -> Find Xiaomi Band -> Unpair / Forget device
+```
+
+After this, only Gadgetbridge will connect to your band. Data collection will be stable.
 
 ---
 
-## 传感器说明
+## Sensor Reference
 
-| 传感器   | 采集器                | 数据项                             | 间隔   | 可关闭？ |
-| -------- | --------------------- | ---------------------------------- | ------ | -------- |
-| 手环健康 | HealthDataCollector   | 心率、步数、血氧、压力、睡眠阶段   | 5 分钟 | 是       |
-| GPS      | GpsCollector          | 经纬度、速度、精度                 | 5 分钟 | 是       |
-| 环境音频 | AudioCollector        | 录音片段（VAD 检测）+ 声纹         | 连续   | 是       |
-| 系统状态 | SystemStateCollector  | WiFi/BT/屏幕/前台 App/电量         | 5 秒   | 是       |
-| 通知     | NotificationCollector | 通知计数、来源应用                 | 5 秒   | 是       |
-| 辅助功能 | AccessibilityService  | 前台应用、输入内容（需无障碍权限） | 5 秒   | 是       |
+| Sensor        | Collector              | Data                                    | Interval | Togglable? |
+| ------------- | ---------------------- | --------------------------------------- | -------- | ---------- |
+| Band health   | HealthDataCollector    | Heart rate, steps, SpO2, stress, sleep stages | 5 min | Yes        |
+| GPS           | GpsCollector           | Lat/lng, speed, accuracy                | 5 min    | Yes        |
+| Ambient audio | AudioCollector         | Audio segments (VAD-gated) + speaker embedding | Continuous | Yes  |
+| System state  | SystemStateCollector   | WiFi/BT state, screen on/off, foreground app, battery | 5 sec | Yes |
+| Notifications | NotificationCollector  | Notification count, source app           | 5 sec    | Yes        |
+| Accessibility | AccessibilityService   | Foreground app, typed content (requires accessibility permission) | 5 sec | Yes |
 
-所有传感器均可独立开关，不强制全开。
+All sensors can be toggled independently. Nothing is forced on.
 
 ---
 
-## 可选功能
+## Optional Features
 
-### AI 分析（OpenCode）
+### AI Analysis (OpenCode)
 
-OpenCode 是本系统的**核心组件**，所有 AI 功能依赖它运行。系统使用 Oh My OpenAgent 管理 OpenCode，利用其自动加载各子目录 `AGENTS.md` 的机制组织 AI 智能体上下文，并借助 `opencode-dcp` 插件赋予 AI 自主修剪上下文的能力，避免长对话时上下文超限。
+OpenCode is the **core component** of this system. All AI features depend on it. The system uses Oh My OpenAgent to manage OpenCode, leveraging its automatic loading of `AGENTS.md` files from subdirectories to organize AI agent context. The `opencode-dcp` plugin gives the AI the ability to autonomously prune its context, preventing context overflow in long conversations.
 
-安装 OpenCode 和 Oh My OpenAgent 后，在 `config.yaml` 中配置：
+After installing OpenCode and Oh My OpenAgent, configure in `config.yaml`:
 
 ```yaml
 opencode:
-  port: 5090                    # OpenCode 服务端口
-  directory: ai                 # AI 工作目录
+  port: 5090                    # OpenCode service port
+  directory: ai                 # AI working directory
 ```
 
-启动器（`launcher.py`）会自动启动 OpenCode 服务。如果 OpenCode 无法启动，任务调度引擎（TaskScheduler）会初始化失败，后端将无法正常运行。
+The launcher (`launcher.py`) will start OpenCode automatically. If OpenCode cannot start, the TaskScheduler will fail to initialize and the backend will not run properly.
 
-AI 系统的核心能力：
+Core AI capabilities:
 
-- **定时检查**：每 2 小时检查数据完整性
-- **每日复盘**：每天 21:00 生成全天回顾报告
-- **趋势分析**：每周/双周输出行为模式变化
-- **异常检测**：心率突变、活动异常、睡眠不足等
-- **主动交互**：通过 App 会话界面与 AI 对话
-- **通知推送**：分析结果实时推送到 App
+- **Scheduled data check**: Verifies data integrity every 2 hours
+- **Daily review**: Generates a full-day retrospective report at 21:00
+- **Trend analysis**: Weekly/biweekly behavioral pattern reports
+- **Anomaly detection**: Sudden heart rate changes, abnormal activity, insufficient sleep, etc.
+- **Interactive chat**: Talk to the AI through the app's session interface
+- **Push notifications**: Analysis results pushed to the app in real time
 
 ### Windows PC Agent
 
-独立服务，运行在 Windows 电脑上，采集 PC 状态：
+A standalone service that runs on Windows and collects PC state:
 
-- 系统是否待机/锁屏
-- 当前前台窗口标题
+- System idle / locked state
+- Current foreground window title
 
 ```bash
 cd agent
@@ -499,142 +501,142 @@ pip install -r requirements.txt
 python agent_server.py
 ```
 
-Agent 配置在 `agent/config.json` 中，`agent_token` 用于 API 认证。
+Agent configuration is in `agent/config.json`. The `agent_token` is used for API authentication.
 
-> 注：Agent 代码中包含截图、文件操作、命令执行等历史遗留功能，这些功能不稳定且不再维护，不建议使用。
+> Note: The agent code contains legacy features like screenshots, file operations, and command execution. These are unstable, unmaintained, and not recommended for use.
 
 ---
 
-## 配置参考
+## Configuration Reference
 
-完整配置文件 `config.yaml` 位于项目根目录：
+The full configuration file `config.yaml` lives in the project root:
 
 ```yaml
 server:
-  host: 0.0.0.0          # 监听地址
-  https_port: 1256        # HTTPS 端口
+  host: 0.0.0.0          # Listen address
+  https_port: 1256        # HTTPS port
 
 opencode:
-  port: 5090              # OpenCode 端口
+  port: 5090              # OpenCode port
 
 ssl:
-  enabled: true           # HTTPS 开关
-  cert: /path/to/cert.pem # 证书路径
-  key:  /path/to/key.pem  # 私钥路径
+  enabled: true           # HTTPS toggle
+  cert: /path/to/cert.pem # Certificate path
+  key:  /path/to/key.pem  # Private key path
 
 auth:
-  username: admin         # 登录用户名
-  password_hash: ""       # bcrypt 密码哈希（必填）
+  username: admin         # Login username
+  password_hash: ""       # bcrypt password hash (required)
 
 api:
-  mimo_key: ""            # MiMo API Key（可选，TTS 用）
+  mimo_key: ""            # MiMo API Key (optional, for TTS)
 
 features:
-  opencode_mock_enabled: false  # 调试用，不连真实 AI 服务
+  opencode_mock_enabled: false  # Debug only, skips real AI service
 ```
 
-详见 `backend/config/config.example.yaml` 的所有可选字段。
+See `backend/config/config.example.yaml` for all optional fields.
 
 ---
 
-## 目录结构
+## Directory Structure
 
 ```
 LiveLog-AI/
-├── config.yaml                # 配置文件（项目根目录）
-├── launcher.py                # 统一启动器
-├── start.bat                  # Windows 一键启动
-├── backend/                   # FastAPI 后端
-│   ├── main.py                # 主入口
-│   ├── routers/               # API 路由
-│   ├── services/              # 业务服务
-│   ├── middleware/            # 认证中间件
-│   ├── config/                # 配置模块
-│   └── tests/                 # 测试
-├── frontend/mobile/           # App WebView 前端（Vue 3）
-│   └── dist/                  # 预构建产物
-├── app/                       # Android 数据采集 App（Kotlin）
-│   ├── src/                   # 源代码
-│   └── docs/                  # 手环数据采集指南等
-├── ai/                        # AI 分析系统
-│   ├── agents/                # 子智能体定义
-│   ├── analysis/              # 分析脚本
-│   └── data/tasks/            # 定时任务配置（默认禁用）
-├── agent/                     # Windows PC 状态采集
-└── scripts/                   # 工具脚本
+├── config.yaml                # Configuration file (project root)
+├── launcher.py                # Unified launcher
+├── start.bat                  # Windows one-click start
+├── backend/                   # FastAPI backend
+│   ├── main.py                # Entry point
+│   ├── routers/               # API routes
+│   ├── services/              # Business services
+│   ├── middleware/             # Auth middleware
+│   ├── config/                # Configuration module
+│   └── tests/                 # Tests
+├── frontend/mobile/           # App WebView frontend (Vue 3)
+│   └── dist/                  # Pre-built artifacts
+├── app/                       # Android data collection app (Kotlin)
+│   ├── src/                   # Source code
+│   └── docs/                  # Band data collection guide, etc.
+├── ai/                        # AI analysis system
+│   ├── agents/                # Sub-agent definitions
+│   ├── analysis/              # Analysis scripts
+│   └── data/tasks/            # Task configuration (disabled by default)
+├── agent/                     # Windows PC state collector
+└── scripts/                   # Utility scripts
 ```
 
 ---
 
-## API 端点
+## API Endpoints
 
-| 端点                      | 方法 | 功能                                |
-| ------------------------- | ---- | ----------------------------------- |
-| `/health`               | GET  | 健康检查                            |
-| `/login`                | POST | 登录获取 Token                      |
-| `/auth/check`           | GET  | Token 有效性检查                    |
-| `/api/health/sync`      | POST | 健康数据上传（心率/步数/睡眠等）    |
-| `/api/health/query`     | GET  | 健康数据查询                        |
-| `/api/health/upload-db` | POST | 上传 Gadgetbridge 数据库文件        |
-| `/api/perception/*`     | POST | 感知数据上传（GPS/系统状态/通知等） |
-| `/api/screen/tasks`     | GET  | 定时任务列表                        |
-| `/api/screen/tts/speak` | POST | TTS 语音合成                        |
-| `/api/screen/session/*` | *    | AI 会话管理                         |
-| `/api/screen/ws`        | WS   | WebSocket 主连接                    |
-| `/api/speakers/*`       | *    | 声纹管理                            |
-| `/api/notification/*`   | *    | 通知推送                            |
-| `/api/ota/*`            | *    | OTA 自动更新                        |
-| `/mobile`               | GET  | App WebView 前端页面                |
-
----
-
-## 常见问题
-
-**Q: 启动报错 "请在 config.yaml 中设置 AUTH_PASSWORD_HASH"**
-
-A: 首次启动必须在 `config.yaml` 中设置 bcrypt 格式的密码哈希。见 [1.3 配置](#13-配置)。
-
-**Q: Android App 连不上服务器**
-
-A: 检查：
-
-1. 服务器防火墙是否放行了对应端口
-2. 使用 `openssl s_client -connect <IP>:<端口>` 测试证书是否有效
-3. App 中填写的 URL 必须以 `https://` 开头
-4. 手机和服务器是否在同一网络（局域网）或服务器有公网 IP
-
-**Q: 手环频繁断连**
-
-A: 两个 App 抢 BLE 连接。见 [5.6 禁用小米运动健康后台](#56-禁用小米运动健康后台关键)。
-
-**Q: 健康数据为空**
-
-A: 检查：
-
-1. Gadgetbridge 是否已配对手环并正常同步数据
-2. App 设置中的手环数据库路径是否正确（默认 `/storage/emulated/0/Gadgetbridge.db`）
-3. 点击"立即同步数据"后等待 10 秒，再看数据状态
-4. Gadgetbridge 的自动导出数据库是否已开启
-
-**Q: 前端页面显示 404**
-
-A: `frontend/mobile/dist/` 目录不存在。要么拉取仓库时包含了 dist/，要么自行运行 `npm run build`。
-
-**Q: 后台 Service 被系统杀死**
-
-A: 小米/OPPO/华为等系统会限制后台进程。必须：
-
-1. 将 App 在最近任务中锁定（下拉卡片）
-2. 设置 → 省电策略 → 无限制
-3. 允许自启动
-4. 部分系统还需在安全中心中设为"受保护应用"
+| Endpoint                   | Method | Description                              |
+| -------------------------- | ------ | ---------------------------------------- |
+| `/health`                  | GET    | Health check                             |
+| `/login`                   | POST   | Login and get token                      |
+| `/auth/check`              | GET    | Token validity check                     |
+| `/api/health/sync`         | POST   | Upload health data (heart rate, steps, sleep, etc.) |
+| `/api/health/query`        | GET    | Query health data                        |
+| `/api/health/upload-db`    | POST   | Upload Gadgetbridge database file        |
+| `/api/perception/*`        | POST   | Upload perception data (GPS, system state, notifications) |
+| `/api/screen/tasks`        | GET    | List scheduled tasks                     |
+| `/api/screen/tts/speak`    | POST   | TTS speech synthesis                     |
+| `/api/screen/session/*`    | *      | AI session management                    |
+| `/api/screen/ws`           | WS     | Main WebSocket connection                |
+| `/api/speakers/*`          | *      | Speaker (voiceprint) management          |
+| `/api/notification/*`      | *      | Push notification management             |
+| `/api/ota/*`               | *      | OTA auto-update                          |
+| `/mobile`                  | GET    | App WebView frontend page                |
 
 ---
 
-## 许可证
+## FAQ
 
-[Apache 2.0](LICENSE) © 2026 Axeuh
+**Q: Startup error "Please set AUTH_PASSWORD_HASH in config.yaml"**
 
-## 贡献
+A: You must set a bcrypt password hash in `config.yaml` on first startup. See the Configuration section above.
 
-欢迎贡献！请参阅 [CONTRIBUTING.md](CONTRIBUTING.md) 了解参与方式。
+**Q: Android App cannot connect to the server**
+
+A: Check:
+
+1. The server firewall is open for the configured port
+2. Use `openssl s_client -connect <IP>:<PORT>` to verify the certificate
+3. The URL in the app must start with `https://`
+4. The phone and server are on the same network (LAN), or the server has a public IP
+
+**Q: Band keeps disconnecting**
+
+A: Two apps are fighting for the BLE connection. See the "Disable Mi Fitness Background" step in the Gadgetbridge section above.
+
+**Q: Health data shows nothing**
+
+A: Check:
+
+1. Gadgetbridge is paired with the band and syncing data normally
+2. The band database path in the app settings is correct (default: `/storage/emulated/0/Gadgetbridge.db`)
+3. Tap "Sync data now" and wait 10 seconds, then check the data status again
+4. Auto-export is enabled in Gadgetbridge
+
+**Q: Frontend page shows 404**
+
+A: The `frontend/mobile/dist/` directory is missing. Either make sure `dist/` was included when cloning, or run `npm run build` yourself.
+
+**Q: Background Service keeps getting killed**
+
+A: Xiaomi, OPPO, Huawei and other OEMs aggressively restrict background processes. You must:
+
+1. Lock the app in recent tasks (pull down on the card)
+2. Settings -> Battery optimization -> Unrestricted
+3. Enable auto-start
+4. On some systems, also add the app to "Protected apps" in the security center
+
+---
+
+## License
+
+[Apache 2.0](LICENSE) (c) 2026 Axeuh
+
+## Contributing
+
+Contributions are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for how to get involved.
