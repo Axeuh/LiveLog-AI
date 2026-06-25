@@ -1,211 +1,556 @@
 # Axeuh Health Monitor
 
-AI 驱动的健康监测系统。通过 Android App 采集传感器数据（心率、GPS、步数、音频环境等），配合 Windows 远程 Agent，由 AI 自动分析用户健康状态和行为模式。
+AI 驱动的个人健康监测系统。通过 Android App 采集手环传感器数据（心率、步数、血氧、压力、睡眠等），结合手机自身传感器（GPS、音频环境、屏幕状态、通知等），上传至后端存储并由 AI 自动分析健康状态和行为模式。
 
-## 架构
+**适用场景**：个人健康追踪、生活习惯分析、异常检测提醒。配合 Gadgetbridge 使用小米/华米手环获取健康数据。
 
+---
+
+## 系统架构
+
+```mermaid
+graph TB
+    subgraph Android[Android App]
+        HDC[HealthDataCollector<br/>心率/步数/血氧/压力/睡眠]
+        AC[AudioCollector<br/>环境音+VAD]
+        GC[GpsCollector<br/>GPS定位]
+        SSC[SystemStateCollector<br/>屏幕/网络/电量]
+        NC[NotificationCollector<br/>通知统计]
+    end
+
+    subgraph Backend[后端 FastAPI]
+        AM[AuthMiddleware<br/>Token认证]
+        HS[健康数据存储<br/>POST /api/health/sync]
+        PR[感知数据接收<br/>POST /api/perception/]
+        TTS[TTS语音合成<br/>MiMo API]
+        OTA[OTA更新<br/>APK远程升级]
+        TS[定时任务调度<br/>AI自动分析]
+        WV[WebView SPA<br/>GET /mobile/]
+        AR[Agent远程管理<br/>WebSocket]
+    end
+
+    subgraph AI[AI分析系统 - OpenCode 可选]
+        DC[每2小时数据检查]
+        DR[每日复盘]
+        WR[周报/双周回顾]
+        AD[异常检测]
+    end
+
+    subgraph BandLayer[数据源]
+        GB[Gadgetbridge<br/>SQLite DB]
+        BAND[小米手环]
+        PHONE[手机传感器]
+    end
+
+    BAND -->|BLE| GB
+    GB -->|读数据库| HDC
+    PHONE --> AC
+    PHONE --> GC
+    PHONE --> SSC
+    PHONE --> NC
+
+    HDC -->|HTTPS POST| HS
+    AC -->|HTTPS POST| PR
+    GC -->|HTTPS POST| PR
+    SSC -->|HTTPS POST| PR
+    NC -->|HTTPS POST| PR
+
+    HS --> AI
+    PR --> AI
+    TS --> AI
+    AI --> DC --> DR --> WR
+    AI --> AD
+
+    WV -->|WebView加载| Backend
+    AR -->|WebSocket| Backend
 ```
-┌─────────────────────────────────────────────────┐
-│                  Android App                      │
-│  DataCollectorService ── HTTPS POST ──┐           │
-│  MobileActivity (WebView) ── HTTPS ──┤           │
-│  OTA 自更新 ── HTTPS ──┐            │           │
-└─────────────────────────┘            │           │
-                                       │           │
-┌─────────────────────────────────────────────────┐
-│              Windows 远程 Agent                   │
-│  截图/文件/命令 ── WS/HTTP ────┐                │
-└───────────────────────────────┘                │
-                                                 │
-┌─────────────────────────────────────────────────┐
-│           后端层 (FastAPI 1256/8768)              │
-│  AuthMiddleware ── 用户认证隔离                    │
-│  TTS 语音合成                                     │
-│  定时任务调度 (AI自动化)                            │
-│  感知数据接收 (perception/health)                  │
-│  声纹识别管理                                     │
-│  Agent 远程管理                                   │
-│  OTA 更新                                        │
-│  手机通知推送                                     │
-└────────────────────┬────────────────────────────┘
-                     │
-┌─────────────────────────────────────────────────┐
-│            OpenCode AI (4096 端口)               │
-│  定时数据检查 ── 脚本→子智能体→验收               │
-│  每日复盘 ── 数据验证→报告生成→记忆收割            │
-│  健康异常检测                                     │
-│  行为模式分析                                     │
-└─────────────────────────────────────────────────┘
+
+### 数据流
+
+```mermaid
+sequenceDiagram
+    participant B as 小米手环
+    participant G as Gadgetbridge
+    participant A as Axeuh App
+    participant S as 后端服务器
+    participant AI as OpenCode AI
+
+    B->>G: BLE 连接
+    G->>G: SQLite 数据库
+    G->>A: Intent TRIGGER_EXPORT
+    A->>G: 读取 Gadgetbridge.db
+    G-->>A: 心率/步数/血氧/睡眠
+
+    Note over A,S: HTTPS 双向通信
+
+    A->>S: POST /api/health/sync
+    A->>S: POST /api/perception/{type}
+    S->>S: 存储到 ai/data/{date}/
+
+    alt AI 分析已启用
+        S->>AI: 调用分析任务
+        AI->>AI: 数据检查 / 日报 / 周报
+        AI-->>S: 分析结果
+        S-->>A: 推送通知
+    end
 ```
 
-## 安装
+---
+
+## 先决条件
+
+| 项目 | 要求 |
+|------|------|
+| 服务器 | 任意可运行 Python 3.10+ 的机器（Windows / Linux / macOS） |
+| 手机 | Android 8.0+（API 26），建议 12GB+ 存储空间 |
+| 手环 | 小米手环 8 Pro / 9 Pro（或其他 Gadgetbridge 支持的型号） |
+| 可选 | Node.js 18+（如需自行构建前端） |
+| 可选 | OpenCode CLI（如需 AI 分析功能） |
+
+---
+
+## 安装步骤
+
+### 第一阶段：后端部署
+
+#### 1.1 克隆仓库
 
 ```bash
-# 克隆仓库
 git clone https://github.com/Axeuh/axeuh-health-monitor.git
 cd axeuh-health-monitor
+```
 
-# 后端依赖
+#### 1.2 Python 环境
+
+```bash
+# 推荐使用 conda 或 venv 创建独立环境
+python -m venv venv
+# Windows: venv\Scripts\activate
+# Linux:   source venv/bin/activate
+
 pip install -r backend/requirements.txt
+```
 
-# 如需 ML 功能（声纹识别等），额外安装：
+如需声纹识别等 ML 功能，额外安装：
+
+```bash
 pip install torch torchaudio --index-url https://download.pytorch.org/whl/cu124
 pip install funasr modelscope
 # 或一条命令：
 pip install -e ".[ml]"
-
-# 前端依赖
-cd frontend/mobile && npm install
 ```
 
-## 快速启动
+#### 1.3 配置
+
+编辑项目根目录的 `config.yaml`，以下字段必须填写：
+
+```yaml
+auth:
+  username: admin                    # 登录用户名
+  password_hash: ""                  # 必须：bcrypt 密码哈希（见下方生成方法）
+
+ssl:
+  enabled: true                      # HTTPS 开关（Android App 需要 HTTPS）
+  cert: /path/to/your/cert.pem       # 请填入实际路径
+  key:  /path/to/your/key.pem        # 请填入实际路径
+```
+
+**生成 password_hash**：
 
 ```bash
-# 配置（首次运行前）
-# 编辑项目根目录的 config.yaml，填入你的 API Key 等配置
-# backend/config/config.example.yaml 列出所有可选字段供参考
-
-# 一键启动（Windows）
-start.bat
-
-# 或 Python 启动器（推荐，自动读取 config.yaml）
-python launcher.py
-
-# 单独启动后端（开发模式，HTTP 8768 端口）
-cd backend && python -m uvicorn main:app --reload --port 8768
+python -c "import bcrypt; print(bcrypt.hashpw(b'你的密码', bcrypt.gensalt()).decode())"
 ```
 
-### HTTPS 证书生成
+把输出的哈希值填入 `config.yaml` 的 `password_hash` 字段。
 
-项目要求 HTTPS 连接。开发环境可用自签名证书：
+> 如果 `password_hash` 为空且 `backend/config/auth.json` 不存在，服务启动时会直接崩溃。这是为了防止无密码暴露。
+
+#### 1.4 SSL 证书（Android App 必须）
+
+Android App 强制使用 HTTPS。开发环境可用自签名证书：
 
 ```bash
 # 生成自签名证书（有效期 365 天）
 openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem \
-  -days 365 -nodes -subj "/CN=localhost"
+  -days 365 -nodes -subj "/CN=<你的服务器IP或域名>"
 
-# 将 cert.pem 和 key.pem 路径填入项目根目录 config.yaml 的 ssl.cert / ssl.key 字段
+# 将 cert.pem / key.pem 路径填入 config.yaml 的 ssl.cert / ssl.key
 ```
 
-Android App 首次连接自签名服务器时，需在浏览器中打开 `https://<你的IP>:<端口>/health` 并信任证书。也可将 cert.pem 导入 Android 信任存储。**生产环境请使用受信任 CA 签发的证书**。
+Android App 首次连接自签名服务器时，需在浏览器中打开 `https://<你的IP>:<端口>/health` 并信任证书。也可将 `cert.pem` 导入 Android 信任存储。
+
+**生产环境请使用受信任 CA 签发的证书**（如 Let's Encrypt）。
+
+#### 1.5 第三方 API Key（可选）
+
+```yaml
+api:
+  mimo_key: YOUR_MIMO_API_KEY        # 小米 MiMo API，用于 TTS 语音合成
+  # 获取: https://mimo.xiaomi.com/
+```
+
+缺省 `mimo_key` 不影响核心功能，仅 TTS 端点不可用。
+
+#### 1.6 启动后端
+
+```bash
+# 方式一：统一启动器（推荐，自动读取 config.yaml）
+python launcher.py
+
+# 方式二：仅启动后端（开发模式，HTTP 8768）
+cd backend && python -m uvicorn main:app --reload --port 8768
+
+# 方式三：Windows 一键启动
+start.bat
+```
+
+验证后端运行：
+
+```bash
+curl http://127.0.0.1:8768/health
+# {"status":"healthy"}
+```
+
+#### 1.7 Launcher 路径配置（如使用 launcher.py）
+
+```yaml
+launcher:
+  conda_python: D:\ProgramData\miniconda3\envs\axeuh-multi-agent\python.exe
+  opencode_cmd: C:\Users\Administrator\AppData\Roaming\npm\opencode.cmd
+```
+
+如果未配置或路径错误，launcher 会自动回退到系统 Python 和 `shutil.which('opencode')`。
+
+---
+
+### 第二阶段：前端
+
+前端已预构建，`frontend/mobile/dist/` 目录已包含编译产物，后端会自动在 `/mobile/` 路径下提供。
+
+**无需额外操作。** 后端运行后访问 `http://<服务器IP>:<端口>/mobile/` 即可看到健康看板页面。
+
+如需自行构建：
+
+```bash
+cd frontend/mobile
+npm install
+npm run build    # 输出到 dist/
+```
+
+---
+
+### 第三阶段：Android App 安装
+
+从 [GitHub Releases](https://github.com/Axeuh/axeuh-health-monitor/releases) 下载最新 APK，或自行编译：
+
+```bash
+# 编译 Debug APK
+cd app
+../gradlew assembleDebug
+# 产物: app/build/outputs/apk/debug/app-debug.apk
+```
+
+编译要求（自行编译时）：
+- Android Studio Hedgehog (2023.1)+ 或命令行 Gradle
+- JDK 17
+- Android SDK 36
+
+---
+
+### 第四阶段：手机端配置
+
+此阶段需要在手机上逐步操作。
+
+#### 4.1 安装并打开 App
+
+1. 将 APK 传输到手机安装
+2. 打开 App → 进入设置页面（首次启动自动跳转）
+
+#### 4.2 配置服务器地址
+
+在设置页的 **服务器地址** 字段填入：
+
+```
+https://<你的服务器IP>:<端口>
+```
+
+- 局域网：`https://192.168.x.x:1256`
+- 公网：`https://你的域名:1256`
+- 本地测试：`https://localhost:8767`
+
+点击"保存并测试连接"，等待显示"连接成功"。
+
+#### 4.3 登录
+
+输入用户名和密码（即 `config.yaml` 中配置的账号密码），点击登录。登录成功后 token 会自动保存。
+
+#### 4.4 授予权限
+
+根据提示依次授予权限，每项都有弹窗指引：
+
+| 权限 | 用途 | Android 版本注意 |
+|------|------|-----------------|
+| 通知监听权限 | 采集通知统计 | 手动在系统设置中开启 |
+| 麦克风权限 | 环境音录音分析 | 弹窗授予 |
+| GPS 定位权限 | 位置轨迹 | 弹窗授予（建议选"始终允许"） |
+| 存储权限 | 读取 Gadgetbridge 数据库 | 弹窗授予 |
+| 无障碍服务 | 前台应用/屏幕状态感知 | 手动在系统设置中开启 |
+| 后台弹出界面 | 通知显示 | 小米/OPPO 等需要额外允许 |
+| 省电策略 → 无限制 | 防止 Service 被杀死 | 小米/OPPO 等必须设置 |
+
+> **小米/红米手机注意**：在"最近任务"界面将 App 锁定（下拉卡片出现锁图标），防止系统清理后台。
+
+#### 4.5 确认 App 运行
+
+返回 App 主界面，查看状态栏是否显示"传感器运行中"。设置页的传感器预览区应能看到实时更新的传感器数据。
+
+---
+
+### 第五阶段：手环健康数据配置（Gadgetbridge）
+
+健康数据（心率、步数、血氧、压力、睡眠）通过 **Gadgetbridge**（开源第三方 App）从手环获取。
+
+#### 5.1 安装 Gadgetbridge
+
+从 F-Droid 下载安装：https://f-droid.org/packages/nodomain.freeyourgadget.gadgetbridge/
+
+> 不要从 Google Play 安装，F-Droid 版本更新更快。
+
+#### 5.2 配对手环
+
+首次打开 Gadgetbridge 后扫描并配对手环。
+
+**关于 Auth Key**：小米手环 8 Pro / 9 Pro 需要 32 位十六进制 Auth Key 才能连接。获取方法：
+
+1. 安装 **小米运动健康（Mi Fitness）**App，正常连接手环并使用至少一次
+2. 开启手机的 **USB 调试**，连接电脑执行：
+   ```
+   adb shell
+   cd /storage/emulated/0/Android/data/com.xiaomi.hm.health/files/log/
+   cat Transfer.device.log | grep token
+   ```
+3. 日志中能找到两个 token：**小米账号 token** 和 **手环 Auth Key**（32 位十六进制字符串）-- 后者才是 Gadgetbridge 配对需要的
+4. 两种 token 都试试，Auth Key 通常在 Gadgetbridge 配对界面输入
+
+> 首次配对手环时需要 Auth Key，配对成功后除非解除绑定，否则不再需要。
+
+#### 5.3 配置自动导出数据库
+
+```
+Gadgetbridge 设置 → 自动化
+  ├─ 自动导出数据库 → 开启
+  └─ 导出路径 → 保持默认（/storage/emulated/0/Gadgetbridge.db）
+```
+
+#### 5.4 开启 Intent API（可选但推荐）
+
+```
+Gadgetbridge 设置 → 开发者选项
+  ├─ 意图接口 → 开启 ACTIVE_SYNC
+  └─ 意图接口 → 开启 TRIGGER_EXPORT
+```
+
+开启后，Axeuh App 的后台 Service 可发送广播主动触发 Gadgetbridge 导出数据库，实现**自动定时采集**（约 5 分钟一次），无需等待 Gadgetbridge 自身的一小时间隔。
+
+#### 5.5 在 App 中设置数据库路径
+
+```
+Axeuh App 设置 → 数据采集 → 手环数据库路径
+  → 选择 /storage/emulated/0/Gadgetbridge.db
+```
+
+如果路径正确，下方健康数据状态区域将显示心率/步数等数据。点击"立即同步数据"可手动测试。
+
+#### 5.6 禁用小米运动健康后台（关键！）
+
+两个 App 会互相抢 BLE 连接，导致 Gadgetbridge 频繁断连。**必须禁止小米运动健康自动连接手环：**
+
+```
+手机设置 → 应用管理 → 小米运动健康
+  → 自启动 → 关闭
+  → 省电策略 → 限制后台
+  → 权限 → 附近设备 → 拒绝（或在系统设置中禁止蓝牙扫描）
+
+如果手环取消了与小米运动健康的配对：
+  → 蓝牙设置 → 找到小米手环 → 取消配对/忽略设备
+```
+
+做完后，只有 Gadgetbridge 会连接手环，数据采集稳定。
+
+---
+
+## 传感器说明
+
+| 传感器 | 采集器 | 数据项 | 间隔 | 可关闭？ |
+|--------|--------|--------|------|---------|
+| 手环健康 | HealthDataCollector | 心率、步数、血氧、压力、睡眠阶段 | 5 分钟 | 是 |
+| GPS | GpsCollector | 经纬度、速度、精度 | 5 分钟 | 是 |
+| 环境音频 | AudioCollector | 录音片段（VAD 检测）+ 声纹 | 连续 | 是 |
+| 系统状态 | SystemStateCollector | WiFi/BT/屏幕/前台 App/电量 | 5 秒 | 是 |
+| 通知 | NotificationCollector | 通知计数、来源应用 | 5 秒 | 是 |
+| 辅助功能 | AccessibilityService | 前台应用、输入内容（需无障碍权限） | 5 秒 | 是 |
+
+所有传感器均可独立开关，不强制全开。
+
+---
+
+## 可选功能
+
+### AI 分析（需 OpenCode）
+
+[OpenCode](https://opencode.ai) 是一个 AI agent 运行时环境。安装后配置：
+
+```yaml
+opencode:
+  port: 5090                    # OpenCode 服务端口
+  directory: ai                 # AI 工作目录
+```
+
+启动时会自动检测 OpenCode，如果不可用则跳过（后端仍正常运行，仅 AI 功能不可用）。
+
+开启后，AI 系统会：
+- 每 2 小时检查数据完整性
+- 每日生成健康复盘报告
+- 每周/双周输出趋势分析
+- 检测心率异常、睡眠不足、活动量过低等
+- 通过 App 推送通知提醒
+
+### Windows 远程 Agent
+
+独立服务，提供远程 PC 管理能力（截图、文件操作、命令执行）。
+
+```bash
+cd agent
+pip install -r requirements.txt
+python agent_server.py
+```
+
+Agent 配置在 `agent/config.json` 中，`agent_token` 用于 API 认证。
+
+---
+
+## 配置参考
+
+完整配置文件 `config.yaml` 位于项目根目录：
+
+```yaml
+server:
+  host: 0.0.0.0          # 监听地址
+  https_port: 1256        # HTTPS 端口
+
+opencode:
+  port: 5090              # OpenCode 端口
+
+ssl:
+  enabled: true           # HTTPS 开关
+  cert: /path/to/cert.pem # 证书路径
+  key:  /path/to/key.pem  # 私钥路径
+
+auth:
+  username: admin         # 登录用户名
+  password_hash: ""       # bcrypt 密码哈希（必填）
+
+api:
+  mimo_key: ""            # MiMo API Key（可选，TTS 用）
+
+features:
+  opencode_mock_enabled: false  # 调试用，不连真实 AI 服务
+```
+
+详见 `backend/config/config.example.yaml` 的所有可选字段。
+
+---
 
 ## 目录结构
 
 ```
 axeuh-health-monitor/
-├── launcher.py               # 统一启动器 (OpenCode + 后端)
-├── start.bat                 # Windows 一键启动
-├── backend/
-│   ├── main.py               # FastAPI 主入口
+├── config.yaml                # 配置文件（项目根目录）
+├── launcher.py                # 统一启动器
+├── start.bat                  # Windows 一键启动
+├── backend/                   # FastAPI 后端
+│   ├── main.py                # 主入口
 │   ├── routers/               # API 路由
-│   │   ├── tts.py            # 语音合成
-│   │   ├── tasks.py          # 定时任务
-│   │   ├── health.py         # 健康数据同步/查询
-│   │   ├── session.py        # 会话管理
-│   │   ├── agents_remote.py  # Agent 远程管理
-│   │   ├── ws_main.py        # 主 WebSocket
-│   │   ├── speakers.py       # 声纹管理
-│   │   ├── ota.py            # OTA 更新
-│   │   ├── mobile.py         # 手机端文件浏览 API
-│   │   ├── notifications.py  # 通知推送
-│   │   ├── pc.py             # PC 感知数据接收
-│   │   └── ...               # 其他
-│   ├── services/             # 业务服务
+│   ├── services/              # 业务服务
 │   ├── middleware/            # 认证中间件
-│   ├── config/               # 配置模块
-│   └── tests/                # 测试
-├── frontend/mobile/          # App WebView 页面
-├── ai/                       # AI 监测系统
-│   ├── AGENTS.md             # AI 智能体上下文
-│   ├── agents/               # 子智能体 prompt
-│   ├── analysis/             # 分析脚本
-│   ├── data/                 # 按日组织的数据文件
-│   └── 记忆/                 # 长期记忆系统
-├── app/                      # Android 数据采集 App
-├── agent/                    # Windows 远程 Agent
-└── scripts/                  # 工具脚本
+│   ├── config/                # 配置模块
+│   └── tests/                 # 测试
+├── frontend/mobile/           # App WebView 前端（Vue 3）
+│   └── dist/                  # 预构建产物
+├── app/                       # Android 数据采集 App（Kotlin）
+│   ├── src/                   # 源代码
+│   └── docs/                  # 手环数据采集指南等
+├── ai/                        # AI 分析系统
+│   ├── agents/                # 子智能体定义
+│   ├── analysis/              # 分析脚本
+│   └── data/tasks/            # 定时任务配置（默认禁用）
+├── agent/                     # Windows 远程 Agent
+└── scripts/                   # 工具脚本
 ```
 
-## 核心功能
-
-| 功能 | 说明 |
-|------|------|
-| 感知数据采集 | Android 传感器（心率/GPS/步数/音频/屏幕/通知等） |
-| 健康数据同步 | 心率、血氧、压力、睡眠、步数（手环+手机） |
-| AI 定时分析 | 每2小时数据检查 + 每日复盘 |
-| TTS 语音播报 | MiMo API 语音合成 |
-| 声纹识别 | funasr ERes2NetV2 说话人识别 |
-| 手机通知推送 | 异常检测/任务完成/日常建议 |
-| 定时任务 | 自动执行 AI 分析任务 |
-| 远程 Agent 管理 | Windows 远程截图/文件/命令 |
-| OTA 自更新 | Android App 远程自动升级 |
-| 多用户隔离 | 独立登录 + 数据按用户路由 |
-
-## 开发
-
-```bash
-# 后端
-cd backend
-pip install -r requirements.txt
-python -m uvicorn main:app --reload --port 8768
-
-# 测试
-cd backend
-python -m pytest tests/ -v
-```
-
-## Android App 构建
-
-```bash
-# 在项目根目录执行
-cd app
-
-# Debug APK
-../gradlew assembleDebug
-
-# 产物位置: app/build/outputs/apk/debug/app-debug.apk
-
-# Release APK（需配置签名）
-../gradlew assembleRelease
-```
-
-编译要求：
-- Android Studio Hedgehog (2023.1) 或更高版本
-- JDK 17
-- Android SDK 36 (compileSdk)
-- Gradle 8.x (由 Gradle Wrapper 自动管理)
-
-Android App 主要功能：
-- 传感器数据采集（心率/GPS/步数/音频/屏幕/通知/电量）
-- 后台 Service 持续运行
-- WebView 加载后端前端页面
-- OTA 自更新
+---
 
 ## API 端点
 
 | 端点 | 方法 | 功能 |
 |------|------|------|
-| `/api/screen/tts/speak` | POST | 语音合成 |
-| `/api/screen/tts/stop` | POST | 停止播放 |
-| `/api/screen/tasks` | GET | 定时任务列表 |
-| `/api/screen/session/*` | * | 会话管理 |
-| `/api/screen/ws` | WS | WebSocket 主连接 |
-| `/api/health/sync` | POST | 健康数据上传 |
-| `/api/health/query` | GET | 健康数据查询 |
-| `/api/speakers/*` | * | 声纹管理 |
-| `/api/agents/*` | * | Agent 管理 |
-| `/api/notification/*` | * | 通知推送 |
-| `/api/ota/*` | * | OTA 更新 |
-| `/api/mobile/*` | * | 手机端文件浏览 |
-| `/mobile` | GET | App WebView 页面 |
-| `/login` | POST | 登录 |
 | `/health` | GET | 健康检查 |
+| `/login` | POST | 登录获取 Token |
+| `/auth/check` | GET | Token 有效性检查 |
+| `/api/health/sync` | POST | 健康数据上传（心率/步数/睡眠等） |
+| `/api/health/query` | GET | 健康数据查询 |
+| `/api/health/upload-db` | POST | 上传 Gadgetbridge 数据库文件 |
+| `/api/perception/*` | POST | 感知数据上传（GPS/系统状态/通知等） |
+| `/api/screen/tasks` | GET | 定时任务列表 |
+| `/api/screen/tts/speak` | POST | TTS 语音合成 |
+| `/api/screen/session/*` | * | AI 会话管理 |
+| `/api/screen/ws` | WS | WebSocket 主连接 |
+| `/api/speakers/*` | * | 声纹管理 |
+| `/api/notification/*` | * | 通知推送 |
+| `/api/ota/*` | * | OTA 自动更新 |
+| `/mobile` | GET | App WebView 前端页面 |
 
-## 依赖
+---
 
-- Python 3.10+
-- FastAPI, Uvicorn
-- OpenCode (AI 运行环境)
+## 常见问题
+
+**Q: 启动报错 "请在 config.yaml 中设置 AUTH_PASSWORD_HASH"**
+
+A: 首次启动必须在 `config.yaml` 中设置 bcrypt 格式的密码哈希。见 [1.3 配置](#13-配置)。
+
+**Q: Android App 连不上服务器**
+
+A: 检查：
+1. 服务器防火墙是否放行了对应端口
+2. 使用 `openssl s_client -connect <IP>:<端口>` 测试证书是否有效
+3. App 中填写的 URL 必须以 `https://` 开头
+4. 手机和服务器是否在同一网络（局域网）或服务器有公网 IP
+
+**Q: 手环频繁断连**
+
+A: 两个 App 抢 BLE 连接。见 [5.6 禁用小米运动健康后台](#56-禁用小米运动健康后台关键)。
+
+**Q: 健康数据为空**
+
+A: 检查：
+1. Gadgetbridge 是否已配对手环并正常同步数据
+2. App 设置中的手环数据库路径是否正确（默认 `/storage/emulated/0/Gadgetbridge.db`）
+3. 点击"立即同步数据"后等待 10 秒，再看数据状态
+4. Gadgetbridge 的自动导出数据库是否已开启
+
+**Q: 前端页面显示 404**
+
+A: `frontend/mobile/dist/` 目录不存在。要么拉取仓库时包含了 dist/，要么自行运行 `npm run build`。
+
+**Q: 后台 Service 被系统杀死**
+
+A: 小米/OPPO/华为等系统会限制后台进程。必须：
+1. 将 App 在最近任务中锁定（下拉卡片）
+2. 设置 → 省电策略 → 无限制
+3. 允许自启动
+4. 部分系统还需在安全中心中设为"受保护应用"
+
+---
 
 ## 许可证
 
@@ -214,4 +559,3 @@ Android App 主要功能：
 ## 贡献
 
 欢迎贡献！请参阅 [CONTRIBUTING.md](CONTRIBUTING.md) 了解参与方式。
-
