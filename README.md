@@ -391,7 +391,7 @@ https://<你的服务器IP>:<端口>
 2. 开启手机的 **USB 调试**，连接电脑执行：
    ```
    adb shell
-   cd /storage/emulated/0/Android/data/com.xiaomi.hm.health/files/log/
+   cd /storage/emulated/0/Android/data/com.mi.health/files/log/
    cat Transfer.device.log | grep token
    ```
 3. 日志中能找到两个 token：**小米账号 token** 和 **手环 Auth Key**（32 位十六进制字符串）-- 后者才是 Gadgetbridge 配对需要的
