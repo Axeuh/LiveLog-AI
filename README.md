@@ -427,7 +427,7 @@ Axeuh App 设置 → 数据采集 → 手环数据库路径
 
 ### AI 分析（OpenCode）
 
-OpenCode 是本系统的**核心组件**，所有 AI 功能依赖它运行。系统使用 [Oh My OpenAgent](https://github.com/your-tools/oh-my-openagent) 管理 OpenCode，利用其自动加载各子目录 `AGENTS.md` 的机制组织 AI 智能体上下文，并通过 `opencode-dcp` 插件与后端通信。
+OpenCode 是本系统的**核心组件**，所有 AI 功能依赖它运行。系统使用 [Oh My OpenAgent](https://github.com/your-tools/oh-my-openagent) 管理 OpenCode，利用其自动加载各子目录 `AGENTS.md` 的机制组织 AI 智能体上下文，并借助 `opencode-dcp` 插件赋予 AI 自主修剪上下文的能力，避免长对话时上下文超限。
 
 安装 OpenCode 和 Oh My OpenAgent 后，在 `config.yaml` 中配置：
 
