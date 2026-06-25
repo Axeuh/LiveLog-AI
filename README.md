@@ -33,9 +33,10 @@ graph TB
         HEALTH["/api/health/*<br/>健康数据同步/查询"]
         PERCEPTION["/api/perception/*<br/>感知数据接收"]
         TTS["/api/screen/tts/*<br/>语音合成"]
+        SESSION["/api/screen/session/*<br/>会话管理/SSE流"]
         STORE["文件存储<br/>ai/data/{date}/"]
         GATEWAY[OpenCode Gateway<br/>AI 调用桥接]
-        TASK[任务调度引擎<br/>定时触发/脚本执行/AI分析]
+        TASK[任务调度引擎<br/>定时触发/脚本执行]
     end
 
     subgraph Frontend[前端 - Vue 3 SPA]
@@ -44,12 +45,13 @@ graph TB
         SETT[Settings 设置页]
     end
 
-    subgraph AI[AI 分析 - OpenCode 可选]
+    subgraph AISystem[AI 分析 - OpenCode 可选]
+        AI[OpenCode 服务<br/>AI 模型推理]
         DC[数据检查<br/>每 2 小时]
         DR[每日复盘<br/>每天 21:00]
         WR[周报/双周回顾]
         AD[异常检测]
-        NOTIFY[通知推送<br/>分析结果 → App]
+        NOTIFY[通知推送]
     end
 
     GB -->|读 SQLite| HDC
@@ -64,16 +66,24 @@ graph TB
     UPLOAD -->|请求TTS| TTS
     TTS -->|返回音频| UPLOAD
 
+    UPLOAD <-->|会话消息/SSE流| SESSION
+    SESSION <--> GATEWAY
+
     HEALTH --> STORE
     PERCEPTION --> STORE
 
-    STORE --> GATEWAY
-    GATEWAY --> AI
     TASK --> GATEWAY
+    GATEWAY --> AI
 
-    AI --> DC --> DR --> WR
+    AI --> DC
+    AI --> DR
+    AI --> WR
     AI --> AD
-    AI --> NOTIFY -->|推送| UPLOAD
+    DC --> NOTIFY
+    DR --> NOTIFY
+    WR --> NOTIFY
+    AD --> NOTIFY
+    NOTIFY -->|推送| UPLOAD
 ```
 
 ### 数据流
