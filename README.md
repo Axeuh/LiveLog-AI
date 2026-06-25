@@ -1,6 +1,6 @@
 # Axeuh Health Monitor
 
-自托管的 AI 个人数据助理。通过 Android App 持续采集手机和手环传感器数据（心率、步数、GPS、音频环境、通知、屏幕状态等），上传至私有后端存储，由 AI 定时分析并生成洞察报告。
+自托管的 AI 个人数据助理。通过 Android App 持续采集手机和手环传感器数据（心率、步数、GPS、音频环境、通知、屏幕状态等），上传至私有后端存储，由 OpenCode AI 定时分析并生成洞察报告。
 
 不是单纯的健康追踪工具，而是一个**持续运行、主动理解你的 AI 代理**：它学习你的作息规律、监测异常变化、在每天结束时告诉你今天过得怎么样，全部运行在你自己的服务器上。
 
@@ -45,7 +45,7 @@ graph TB
         SETT[Settings 设置页]
     end
 
-    subgraph AISystem[AI 分析 - OpenCode 可选]
+    subgraph AISystem[AI 分析 - OpenCode 核心]
         AI[OpenCode 服务<br/>AI 模型推理]
         DC[数据检查<br/>每 2 小时]
         DR[每日复盘<br/>每天 21:00]
@@ -133,7 +133,7 @@ sequenceDiagram
 | 手机   | Android 8.0+（API 26），建议 12GB+ 存储空间               |
 | 手环   | 小米手环 8 Pro / 9 Pro（或其他 Gadgetbridge 支持的型号）  |
 | 可选   | Node.js 18+（如需自行构建前端）                           |
-| 可选   | OpenCode CLI（如需 AI 分析功能）                          |
+| 核心   | OpenCode + Oh My OpenAgent + opencode-dcp 插件           |
 
 ---
 
@@ -425,9 +425,11 @@ Axeuh App 设置 → 数据采集 → 手环数据库路径
 
 ## 可选功能
 
-### AI 分析（需 OpenCode）
+### AI 分析（OpenCode）
 
-[OpenCode](https://opencode.ai) 是一个 AI agent 运行时环境。安装后配置：
+OpenCode 是本系统的**核心组件**，所有 AI 功能依赖它运行。系统使用 [Oh My OpenAgent](https://github.com/your-tools/oh-my-openagent) 管理 OpenCode，利用其自动加载各子目录 `AGENTS.md` 的机制组织 AI 智能体上下文，并通过 `opencode-dcp` 插件与后端通信。
+
+安装 OpenCode 和 Oh My OpenAgent 后，在 `config.yaml` 中配置：
 
 ```yaml
 opencode:
@@ -435,15 +437,16 @@ opencode:
   directory: ai                 # AI 工作目录
 ```
 
-启动时会自动检测 OpenCode，如果不可用则跳过（后端仍正常运行，仅 AI 功能不可用）。
+启动器（`launcher.py`）会自动启动 OpenCode 服务。如果 OpenCode 无法启动，任务调度引擎（TaskScheduler）会初始化失败，后端将无法正常运行。
 
-开启后，AI 系统会：
+AI 系统的核心能力：
 
-- 每 2 小时检查数据完整性
-- 每日生成健康复盘报告
-- 每周/双周输出趋势分析
-- 检测心率异常、睡眠不足、活动量过低等
-- 通过 App 推送通知提醒
+- **定时检查**：每 2 小时检查数据完整性
+- **每日复盘**：每天 21:00 生成全天回顾报告
+- **趋势分析**：每周/双周输出行为模式变化
+- **异常检测**：心率突变、活动异常、睡眠不足等
+- **主动交互**：通过 App 会话界面与 AI 对话
+- **通知推送**：分析结果实时推送到 App
 
 ### Windows PC Agent
 
