@@ -246,7 +246,7 @@ class ServiceManager:
 
     def run(self):
         """主循环：启动 OpenCode → 启动后端 → 监控自动重启"""
-        log('SYSTEM', 'LiveLog-AI Launcher')
+        log('SYSTEM', 'LiveLog-AI Launcher by Axeuh')
 
         def handle_signal(signum, frame):
             self.running = False

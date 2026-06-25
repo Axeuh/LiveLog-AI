@@ -32,7 +32,7 @@ from services.script_runner import ScriptRunner, init_script_runner
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Application lifecycle"""
-    logger.info("[LiveLog-AI] Starting...")
+    logger.info("[LiveLog-AI] Starting... (by Axeuh)")
     import asyncio
     loop = asyncio.get_running_loop()
     from services.event_loop_manager import set_main_loop
