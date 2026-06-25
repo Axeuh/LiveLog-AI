@@ -132,8 +132,40 @@ sequenceDiagram
 | 服务器 | 任意可运行 Python 3.10+ 的机器（Windows / Linux / macOS） |
 | 手机   | Android 8.0+（API 26），建议 12GB+ 存储空间               |
 | 手环   | 小米手环 8 Pro / 9 Pro（或其他 Gadgetbridge 支持的型号）  |
-| 可选   | Node.js 18+（如需自行构建前端）                           |
 | 核心   | OpenCode + Oh My OpenAgent + opencode-dcp 插件           |
+
+## 模型依赖
+
+本项目依赖多种 AI 模型，分为核心 LLM 和可选音频 ML 模型两类。
+
+### 核心 LLM（必须，由 OpenCode 调用）
+
+| 模型 | 用途 | 提供商 | 配置位置 |
+|------|------|--------|----------|
+| deepseek-v4-flash | AI 分析推理默认模型 | DeepSeek | `config.yaml` → `opencode.default_model` |
+
+OpenCode 支持所有兼容 OpenAI API 的模型提供商（DeepSeek、Anthropic、OpenAI 等），可在 `backend/config/model_config.json` 或 OpenCode 配置中切换。
+
+### 音频 ML 模型（可选，增强音频分析能力）
+
+安装命令：`pip install torch torchaudio funasr modelscope`
+
+| 模型 | 用途 | 来源 | 首次加载 |
+|------|------|------|----------|
+| **SenseVoiceSmall** (`iic/SenseVoiceSmall`) | 多语言语音识别 ASR（中/英/日/粤等） | ModelScope / funasr | 自动下载，约 1-3 分钟 |
+| **emotion2vec_plus_base** (`iic/emotion2vec_plus_base`) | 语音情绪识别（开心/悲伤/愤怒等） | ModelScope / funasr | 自动下载 |
+| **PANNs Cnn14_16k** | 环境声分类（527 类 AudioSet 标签） | Zenodo 自动下载 | 自动下载，约 200MB |
+| **Silero VAD** | 语音活动检测（VAD，语音预分段） | silero_vad 包 | pip 时已包含 |
+| **funasr ERes2NetV2** | 声纹嵌入提取（说话人识别） | funasr / modelscope | 自动下载 |
+
+上述模型不安装不影响后端启动，仅音频分析、声纹识别、场景感知功能降级。
+
+### 其他
+
+| 功能 | 依赖 | 说明 |
+|------|------|------|
+| 说话人日志 | librosa + sklearn + numpy | 纯算法实现（MFCC + 层次聚类），无外部模型 |
+| TTS 语音合成 | MiMo 云端 API | 非本地模型，需 `api.mimo_key` |
 
 ---
 
