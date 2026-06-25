@@ -133,5 +133,5 @@ gradlew test                                # Android 测试
 - `start.ps1` 使用 `Stop-Process` 释放端口 —— 与操作准则矛盾，已知问题
 - `backend/models.py`（Pydantic 数据模型）与 `backend/models/`（ML 权重目录）命名冲突，导入时注意
 - `app/` 目录是 Android 模块（Gradle），不是 FastAPI 的 app 包
-- 后端 `port 8767` HTTPS / `port 8768` HTTP 开发；Agent `port 18888` 本地 HTTP
+- 后端 `port 1256` HTTPS（生产）/ `port 8768` HTTP 开发；Agent `port 18888` 本地 HTTP
 - OpenCode AI 服务运行在 `port 4096`，后端通过 `opencode_gateway.py` 通信
