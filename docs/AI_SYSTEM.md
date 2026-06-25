@@ -225,31 +225,171 @@ prompt: |-                  # 发送给 AI 的指令
 
 ### Python 自定义脚本
 
-除了 YAML 任务，`ai/data/tasks/` 也支持 `.py` 文件。这些是自己控制执行频率的自循环脚本，通过 `context` API 与 AI 交互：
+除了 YAML 定时任务，`ai/data/tasks/` 也支持 `.py` 文件。Python 脚本不受 YAML 的固定调度限制——它们自循环运行，自己控制频率和逻辑，能做的事情远超简单定时触发。
+
+#### 基本格式
 
 ```python
 """
-name: 脚本名称
-enabled: true
-note: 备注说明
-prompt: 默认提示词
+name: 脚本名称              # 必填，用于日志和识别
+enabled: true                # true=自动启动, false=停止
+note: 备注说明               # 可选
+prompt: |                    # 调用 trigger_task 时的默认提示词
+  请分析今天的感知数据。
 """
 
 def run(context):
+    """自循环模式：自己控制执行频率和条件"""
     while True:
         context.log("检查中...")
-        context.trigger_task("任务名", "请分析数据")
-        context.heartbeat()  # 必须每30秒至少调用一次
+        # 你的逻辑在这里
+        context.heartbeat()   # 必须每30秒至少调用一次
+        time.sleep(60)        # 控制轮询间隔
+```
+
+#### Context API
+
+| 方法 | 说明 |
+|------|------|
+| `context.log(msg)` | 记录结构化日志（写入 `logs/{脚本名}/{日期}.log`） |
+| `context.trigger_task(target, prompt)` | 触发 AI 任务（prompt 可选，不传则用脚本默认 prompt） |
+| `context.alert(msg)` | 报告错误/异常（写入审计日志 `logs/audit/{日期}.jsonl`） |
+| `context.read_file(path)` | 读取文件（沙箱路径，相对 `ai/` 目录） |
+| `context.heartbeat()` | 保活信号（自循环脚本必须每 30 秒至少调用一次） |
+
+#### 脚本能做到的事
+
+**1. 自定义调度策略**
+不限于 YAML 的每日/每周/每月格式，可以实现任意调度逻辑：
+
+```python
+def run(context):
+    while True:
+        now = datetime.now()
+        # 只在用户可能在的时段工作
+        if 8 <= now.hour < 23:
+            # 每 15 分钟检查一次，而非固定间隔
+            if now.minute % 15 == 0:
+                context.trigger_task("检查")
+        # 夜间降低频率
+        else:
+            time.sleep(300)  # 夜间每 5 分钟
+        context.heartbeat()
         time.sleep(60)
 ```
 
-| Context API | 说明 |
-|------------|------|
-| `context.log(msg)` | 记录结构化日志 |
-| `context.trigger_task(target, prompt)` | 触发 AI 任务 |
-| `context.alert(msg)` | 报告错误/异常 |
-| `context.read_file(path)` | 读取文件（沙箱路径） |
-| `context.heartbeat()` | 保活信号（自循环必调） |
+**2. 条件触发的自动化**
+根据数据状态决定是否触发 AI，避免无效执行：
+
+```python
+def run(context):
+    while True:
+        data = context.read_file("data/2026-06-25/perception.jsonl")
+        if data:
+            lines = data.strip().split("\n")
+            last_line = json.loads(lines[-1])
+            # 只在有新的 voice 事件时才触发分析
+            if last_line.get("type") == "voice" and last_line.get("hasSpeech"):
+                context.trigger_task("语音分析", f"最新语音: {last_line.get('asr_text', '')}")
+        context.heartbeat()
+        time.sleep(120)
+```
+
+**3. 集成外部 HTTP API**
+可以向任意外部服务发送请求或读取数据：
+
+```python
+def run(context):
+    while True:
+        # 调用外部 API
+        resp = http_request("GET", "https://api.weather.com/current")
+        if resp and resp.get("temperature"):
+            context.log(f"当前温度: {resp['temperature']}°C")
+        context.heartbeat()
+        time.sleep(1800)
+```
+
+> 注意：沙箱默认限制了 `os`、`subprocess`、`socket` 等模块。HTTP 请求可能需要申请解锁或使用后端提供的代理接口。
+
+**4. 智能家居集成（扩展方向）**
+
+脚本架构天然支持扩展为智能家居自动化中枢：
+
+| 场景 | 实现方式 |
+|------|----------|
+| 读取传感器 | 从 `perception.jsonl` 获取室温/湿度/光照数据（如果 App 上报） |
+| 联动场景 | HR 异常时触发 AI 推送告警；GPS 到家时触发离家/回家场景 |
+| 语音播报 | 通过后端的 TTS API 播报自定义消息 |
+| 状态检查 | 检测到长时间无数据时自动提醒 |
+| 定时场景 | 根据用户作息触发特定场景（如睡前关灯） |
+
+```python
+# 示意：智能家居联动脚本
+def run(context):
+    while True:
+        # 读取最新感知数据
+        data = context.read_file("data/2026-06-25/perception.jsonl")
+        if data:
+            events = [json.loads(l) for l in data.strip().split("\n") if l]
+            last = events[-1] if events else {}
+            
+            # 1. 到家场景：GPS 到家 + 时间在晚上
+            if last.get("type") == "sensor" and "gps" in last:
+                lat, lng = last["gps"].split(",")
+                if is_within_home(float(lat), float(lng)) and is_evening():
+                    context.trigger_task("回家", "用户已到家，执行回家场景")
+            
+            # 2. 睡眠检测：屏幕锁屏 + 长时间无交互 + HR 下降
+            if is_sleep_pattern(events):
+                context.trigger_task("睡眠", "用户似乎已入睡")
+            
+            # 3. 异常告警
+            if last.get("phone_battery", 100) < 20:
+                context.alert("手机电量不足 20%")
+        
+        context.heartbeat()
+        time.sleep(120)
+```
+
+**5. 跨脚本通信**
+多个脚本可以通过 `ai/data/` 下的文件间接通信（写入标记文件、共享队列等）。
+
+**6. 后端 API 联动**
+脚本可以调用后端内部 API（通过 `localhost`），例如 TTS 播报、发送通知等。
+
+#### 与 YAML 任务的对比
+
+| 维度 | YAML 任务 | Python 脚本 |
+|------|-----------|-------------|
+| 调度方式 | 系统定时触发（每日/每周等） | 自己控制循环和频率 |
+| 逻辑复杂度 | 静态 prompt → AI 执行 | 完整编程能力，动态条件判断 |
+| 数据读取 | 由 prompt 中的 AI 逻辑读取 | 直接用 `context.read_file()` 读取 |
+| 外部集成 | 依赖 prompt 中的 AI 能力 | 可直接调用 HTTP API |
+| 启动时机 | 到达预定时间触发一次 | 启动后常驻运行，自己决定何时做何事 |
+| 适用场景 | 固定时间的分析任务 | 实时监控、条件触发、外部集成 |
+
+#### 沙箱限制
+
+| 限制 | 说明 |
+|------|------|
+| 允许导入 | `math`, `json`, `re`, `datetime`, `time`, `random`, `typing`, `collections`, `pathlib` |
+| 部分允许 | `os.path`（仅 `exists/getsize/getmtime/basename/dirname/join/splitext/isfile/isdir/normpath`） |
+| 禁止 | `os`(完整模块)、`subprocess`、`socket`、`shutil`、`ctypes`、`requests`、`asyncio`、`threading`、`multiprocessing` |
+| 禁止内置 | `eval()`, `exec()`, `compile()`, `__import__()`, `open()`, `input()` |
+| 内存限制 | 256 MB |
+| trigger_task 速率 | 上限 10 次/分钟 |
+| 心跳要求 | 必须每 30 秒至少调用一次 `context.heartbeat()`，超时 60 秒自动终止 |
+
+> 沙箱通过 AST 静态分析检查脚本的导入和函数调用，在启动前就拒绝违规脚本。如需使用沙箱白名单之外的模块，需要向用户请求并更新 `check.py` 中的白名单。
+
+#### 运行时管理
+
+- **自动启动**: 脚本被 `enabled: true` 启用后，FileWatcher 自动检测并启动进程
+- **安全审查**: 启动前自动运行 AST 安全检查（`check.py`），有风险直接拒绝
+- **日志**: 运行日志写入 `ai/data/tasks/logs/{脚本名}/{日期}.log`
+- **审计**: 每次 `trigger_task()` 和 `alert()` 写入 `audit/{日期}.jsonl`
+- **热加载**: 修改脚本后自动检测变更，重启脚本进程
+- **故障恢复**: 脚本异常退出后自动重试（最多 3 次）
 
 ---
 
