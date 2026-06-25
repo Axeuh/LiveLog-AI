@@ -35,6 +35,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.security.crypto.EncryptedSharedPreferences
+import androidx.security.crypto.MasterKey
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -133,33 +135,34 @@ fun LoginSection(
                 imeAction = ImeAction.Done
             ),
             keyboardActions = KeyboardActions(
-                onDone = {
-                    if (username.isNotBlank() && password.isNotBlank()) {
-                        scope.launch {
-                            performLogin(
-                                httpClient = httpClient,
-                                serverUrl = serverUrl,
-                                username = username,
-                                password = password,
-                                prefs = prefs,
-                                onStart = {
-                                    localLoginStatus = "登录中..."
-                                    localLoginError = ""
-                                },
-                                onSuccess = { user ->
-                                    localLoginStatus = "已连接"
-                                    scope.launch {
-                                        snackbarHostState?.showSnackbar("登录成功")
+                    onDone = {
+                        if (username.isNotBlank() && password.isNotBlank()) {
+                            scope.launch {
+                                performLogin(
+                                    httpClient = httpClient,
+                                    serverUrl = serverUrl,
+                                    username = username,
+                                    password = password,
+                                    prefs = prefs,
+                                    appContext = context.applicationContext,
+                                    onStart = {
+                                        localLoginStatus = "登录中..."
+                                        localLoginError = ""
+                                    },
+                                    onSuccess = { user ->
+                                        localLoginStatus = "已连接"
+                                        scope.launch {
+                                            snackbarHostState?.showSnackbar("登录成功")
+                                        }
+                                    },
+                                    onError = { msg ->
+                                        localLoginError = msg
+                                        localLoginStatus = "未连接"
                                     }
-                                },
-                                onError = { msg ->
-                                    localLoginError = msg
-                                    localLoginStatus = "未连接"
-                                }
-                            )
+                                )
+                            }
                         }
                     }
-                }
             )
         )
         Spacer(Modifier.height(12.dp))
@@ -178,6 +181,7 @@ fun LoginSection(
                         username = username,
                         password = password,
                         prefs = prefs,
+                        appContext = context.applicationContext,
                         onStart = {
                             localLoginStatus = "登录中..."
                             localLoginError = ""
@@ -291,17 +295,25 @@ private suspend fun performLogin(
     username: String,
     password: String,
     prefs: android.content.SharedPreferences,
+    appContext: android.content.Context,
     onStart: () -> Unit,
     onSuccess: (String) -> Unit,
     onError: (String) -> Unit
 ) {
     onStart()
     try {
+        // 重置 401 标志，允许后续重认证
+        AppHttpClient.resetAuthFailureFlag()
+
         val token = performLoginRequest(httpClient, serverUrl, username, password)
         if (token != null) {
             prefs.edit()
                 .putString(SettingsViewModel.KEY_TOKEN, token)
                 .putString(SettingsViewModel.KEY_USERNAME, username)
+                .apply()
+            // 保存密码到加密 prefs，供 tryReAuth() 自动重登录使用
+            encryptedPrefs(appContext).edit()
+                .putString(SettingsViewModel.KEY_PASSWORD, password)
                 .apply()
             withContext(Dispatchers.Main) {
                 onSuccess(username)
@@ -316,6 +328,23 @@ private suspend fun performLogin(
             onError("网络连接失败: ${e.message}")
         }
     }
+}
+
+/**
+ * 加密 SharedPreferences — 与 SettingsViewModel / AppHttpClient 中相同，
+ * 用于安全保存密码，供 401 自动重登录使用。
+ */
+private fun encryptedPrefs(context: android.content.Context): android.content.SharedPreferences {
+    val masterKey = MasterKey.Builder(context)
+        .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+        .build()
+    return EncryptedSharedPreferences.create(
+        context,
+        "axeuh_secure_prefs",
+        masterKey,
+        EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+        EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+    )
 }
 
 /**
