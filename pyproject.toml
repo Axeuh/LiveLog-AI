@@ -1,0 +1,59 @@
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "axeuh-health-monitor"
+version = "1.1.0"
+description = "AI 驱动的健康监测系统 - Android 传感器数据采集 + FastAPI 后端 + AI 分析"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "Apache-2.0" }
+authors = [
+    { name = "Axeuh" },
+]
+keywords = ["health-monitor", "ai", "fastapi", "android", "sensor"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: System :: Monitoring",
+]
+
+dependencies = [
+    "fastapi>=0.109.0",
+    "uvicorn[standard]>=0.27.0",
+    "websockets>=12.0",
+    "pydantic>=2.5.3",
+    "python-multipart>=0.0.6",
+    "aiohttp>=3.9.1",
+    "httpx>=0.27.0",
+    "requests>=2.31.0",
+    "PyYAML>=6.0",
+    "bcrypt>=4.0.0",
+    "numpy>=1.26.0",
+    "filelock>=3.0.0",
+]
+
+[project.optional-dependencies]
+ml = [
+    "torch>=2.0.0",
+    "torchaudio>=2.0.0",
+    "funasr>=1.0.0",
+    "modelscope>=1.0.0",
+]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-asyncio>=0.23.0",
+]
+
+[tool.setuptools.packages.find]
+include = ["backend*"]
+
+[tool.pytest.ini_options]
+testpaths = ["backend/tests"]
+pythonpath = ["backend"]

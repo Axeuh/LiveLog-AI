@@ -1,0 +1,1063 @@
+{
+  "meta": {
+    "recorded_at": "2026-06-20T18:31:08.950828+00:00",
+    "method": "GET",
+    "path": "/api/screen/session/list",
+    "note": "List all sessions",
+    "python": "D:\\ProgramData\\miniconda3\\envs\\axeuh-multi-agent\\python.exe"
+  },
+  "request": {
+    "method": "GET",
+    "path": "/api/screen/session/list",
+    "headers": {}
+  },
+  "response": {
+    "status_code": 200,
+    "headers": {
+      "date": "Sat, 20 Jun 2026 18:31:08 GMT",
+      "server": "uvicorn",
+      "content-length": "17354",
+      "content-type": "application/json"
+    },
+    "body": {
+      "local_sessions": [],
+      "opencode_sessions": [
+        {
+          "id": "ses_13ae9e163ffe8Yrj6Mmg5DNGDm",
+          "slug": "proud-falcon",
+          "projectID": "9493310a74c40f97bb240ea0b8dc2b939850bb86",
+          "directory": "D:\\Users\\Axeuh\\Desktop\\Axeuh-server\\server\\Axeuh-home-system\\ai",
+          "path": "ai",
+          "summary": {
+            "additions": 0,
+            "deletions": 0,
+            "files": 0
+          },
+          "cost": 3.6885292304000035,
+          "tokens": {
+            "input": 17289244,
+            "output": 407309,
+            "reasoning": 165220,
+            "cache": {
+              "read": 395616768,
+              "write": 0
+            }
+          },
+          "title": "新会话",
+          "agent": "main-task",
+          "model": {
+            "id": "deepseek-v4-flash",
+            "providerID": "deepseek",
+            "variant": "default"
+          },
+          "version": "1.17.6",
+          "time": {
+            "created": 1781423021724,
+            "updated": 1781978543516
+          },
+          "session_id": "ses_13ae9e163ffe8Yrj6Mmg5DNGDm"
+        },
+        {
+          "id": "ses_119cf1d7bffe26h2mZowZ6f68U",
+          "slug": "eager-river",
+          "projectID": "9493310a74c40f97bb240ea0b8dc2b939850bb86",
+          "directory": "D:\\Users\\Axeuh\\Desktop\\Axeuh-server\\server\\Axeuh-home-system\\ai",
+          "path": "ai",
+          "parentID": "ses_13ae9e163ffe8Yrj6Mmg5DNGDm",
+          "summary": {
+            "additions": 0,
+            "deletions": 0,
+            "files": 0
+          },
+          "cost": 0.020757088800000004,
+          "tokens": {
+            "input": 113591,
+            "output": 3254,
+            "reasoning": 3834,
+            "cache": {
+              "read": 1024896,
+              "write": 0
+            }
+          },
+          "title": "复盘子智能体 06-20 (@general subagent)",
+          "agent": "general",
+          "model": {
+            "id": "deepseek-v4-flash",
+            "providerID": "deepseek",
+            "variant": "default"
+          },
+          "version": "1.17.7",
+          "time": {
+            "created": 1781978423940,
+            "updated": 1781978507848
+          },
+          "permission": [
+            {
+              "permission": "task",
+              "pattern": "*",
+              "action": "deny"
+            },
+            {
+              "permission": "call_omo_agent",
+              "pattern": "*",
+              "action": "allow"
+            },
+            {
+              "permission": "question",
+              "pattern": "*",
+              "action": "deny"
+            }
+          ],
+          "session_id": "ses_119cf1d7bffe26h2mZowZ6f68U"
+        },
+        {
+          "id": "ses_14e332e09ffeIoWjvGeG0CNAQO",
+          "slug": "tidy-falcon",
+          "projectID": "9493310a74c40f97bb240ea0b8dc2b939850bb86",
+          "directory": "D:\\Users\\Axeuh\\Desktop\\Axeuh-server\\server\\Axeuh-home-system",
+          "path": "",
+          "summary": {
+            "additions": 0,
+            "deletions": 0,
+            "files": 0
+          },
+          "cost": 3.173266538400009,
+          "tokens": {
+            "input": 9873255,
+            "output": 513125,
+            "reasoning": 257997,
+            "cache": {
+              "read": 562534528,
+              "write": 0
+            }
+          },
+          "title": "小贺app",
+          "agent": "Atlas - Plan Executor",
+          "model": {
+            "id": "deepseek-v4-flash",
+            "providerID": "deepseek",
+            "variant": "max"
+          },
+          "version": "1.14.48",
+          "time": {
+            "created": 1781099450870,
+            "updated": 1781975869880
+          },
+          "session_id": "ses_14e332e09ffeIoWjvGeG0CNAQO"
+        },
+        {
+          "id": "ses_11a0381d4ffeUtctbX4tCJEDzI",
+          "slug": "crisp-wolf",
+          "projectID": "9493310a74c40f97bb240ea0b8dc2b939850bb86",
+          "directory": "D:\\Users\\Axeuh\\Desktop\\Axeuh-server\\server\\Axeuh-home-system",
+          "path": "",
+          "parentID": "ses_14e332e09ffeIoWjvGeG0CNAQO",
+          "summary": {
+            "additions": 0,
+            "deletions": 0,
+            "files": 0
+          },
+          "cost": 0.014271331200000001,
+          "tokens": {
+            "input": 75854,
+            "output": 6562,
+            "reasoning": 2105,
+            "cache": {
+              "read": 437504,
+              "write": 0
+            }
+          },
+          "title": "探索TTS服务实现 (@explore subagent)",
+          "agent": "explore",
+          "model": {
+            "id": "deepseek-v4-flash",
+            "providerID": "deepseek",
+            "variant": "max"
+          },
+          "version": "1.17.7",
+          "time": {
+            "created": 1781974990379,
+            "updated": 1781975129176
+          },
+          "permission": [
+            {
+              "permission": "task",
+              "pattern": "*",
+              "action": "deny"
+            },
+            {
+              "permission": "call_omo_agent",
+              "pattern": "*",
+              "action": "deny"
+            },
+            {
+              "permission": "question",
+              "pattern": "*",
+              "action": "deny"
+            },
+            {
+              "permission": "write",
+              "pattern": "*",
+              "action": "deny"
+            },
+            {
+              "permission": "edit",
+              "pattern": "*",
+              "action": "deny"
+            }
+          ],
+          "session_id": "ses_11a0381d4ffeUtctbX4tCJEDzI"
+        },
+        {
+          "id": "ses_11a3cf29affevpmxcyfUt7G8FL",
+          "slug": "lucky-planet",
+          "projectID": "9493310a74c40f97bb240ea0b8dc2b939850bb86",
+          "directory": "D:\\Users\\Axeuh\\Desktop\\Axeuh-server\\server\\Axeuh-home-system\\ai",
+          "path": "ai",
+          "parentID": "ses_13ae9e163ffe8Yrj6Mmg5DNGDm",
+          "summary": {
+            "additions": 0,
+            "deletions": 0,
+            "files": 0
+          },
+          "cost": 0.026634221599999997,
+          "tokens": {
+            "input": 146103,
+            "output": 9469,
+            "reasoning": 4571,
+            "cache": {
+              "read": 803072,
+              "write": 0
+            }
+          },
+          "title": "子智能体-00点 22~24时 (@general subagent)",
+          "agent": "general",
+          "model": {
+            "id": "deepseek-v4-flash",
+            "providerID": "deepseek",
+            "variant": "default"
+          },
+          "version": "1.17.7",
+          "time": {
+            "created": 1781971225957,
+            "updated": 1781971341685
+          },
+          "permission": [
+            {
+              "permission": "task",
+              "pattern": "*",
+              "action": "deny"
+            },
+            {
+              "permission": "call_omo_agent",
+              "pattern": "*",
+              "action": "allow"
+            },
+            {
+              "permission": "question",
+              "pattern": "*",
+              "action": "deny"
+            }
+          ],
+          "session_id": "ses_11a3cf29affevpmxcyfUt7G8FL"
+        },
+        {
+          "id": "ses_11aaa8451ffeF1bjrOyiirfcHA",
+          "slug": "nimble-tiger",
+          "projectID": "9493310a74c40f97bb240ea0b8dc2b939850bb86",
+          "directory": "D:\\Users\\Axeuh\\Desktop\\Axeuh-server\\server\\Axeuh-home-system\\ai",
+          "path": "ai",
+          "parentID": "ses_13ae9e163ffe8Yrj6Mmg5DNGDm",
+          "summary": {
+            "additions": 0,
+            "deletions": 0,
+            "files": 0
+          },
+          "cost": 0.021182240800000002,
+          "tokens": {
+            "input": 78027,
+            "output": 11551,
+            "reasoning": 8111,
+            "cache": {
+              "read": 1697536,
+              "write": 0
+            }
+          },
+          "title": "子智能体-22点 20~22时 (@general subagent)",
+          "agent": "general",
+          "model": {
+            "id": "deepseek-v4-flash",
+            "providerID": "deepseek",
+            "variant": "default"
+          },
+          "version": "1.17.7",
+          "time": {
+            "created": 1781964045230,
+            "updated": 1781964296705
+          },
+          "permission": [
+            {
+              "permission": "task",
+              "pattern": "*",
+              "action": "deny"
+            },
+            {
+              "permission": "call_omo_agent",
+              "pattern": "*",
+              "action": "allow"
+            },
+            {
+              "permission": "question",
+              "pattern": "*",
+              "action": "deny"
+            }
+          ],
+          "session_id": "ses_11aaa8451ffeF1bjrOyiirfcHA"
+        },
+        {
+          "id": "ses_11b18a38affeCyVPdUWfIsLN14",
+          "slug": "mighty-lagoon",
+          "projectID": "9493310a74c40f97bb240ea0b8dc2b939850bb86",
+          "directory": "D:\\Users\\Axeuh\\Desktop\\Axeuh-server\\server\\Axeuh-home-system\\ai",
+          "path": "ai",
+          "parentID": "ses_13ae9e163ffe8Yrj6Mmg5DNGDm",
+          "summary": {
+            "additions": 0,
+            "deletions": 0,
+            "files": 0
+          },
+          "cost": 0.0177095016,
+          "tokens": {
+            "input": 79963,
+            "output": 8586,
+            "reasoning": 6746,
+            "cache": {
+              "read": 793472,
+              "write": 0
+            }
+          },
+          "title": "子智能体-20点 18~20时 (@general subagent)",
+          "agent": "general",
+          "model": {
+            "id": "deepseek-v4-flash",
+            "providerID": "deepseek",
+            "variant": "default"
+          },
+          "version": "1.17.7",
+          "time": {
+            "created": 1781956828277,
+            "updated": 1781957035853
+          },
+          "permission": [
+            {
+              "permission": "task",
+              "pattern": "*",
+              "action": "deny"
+            },
+            {
+              "permission": "call_omo_agent",
+              "pattern": "*",
+              "action": "allow"
+            },
+            {
+              "permission": "question",
+              "pattern": "*",
+              "action": "deny"
+            }
+          ],
+          "session_id": "ses_11b18a38affeCyVPdUWfIsLN14"
+        },
+        {
+          "id": "ses_11b86164bffeHAvcmnEP5HnUGV",
+          "slug": "hidden-meadow",
+          "projectID": "9493310a74c40f97bb240ea0b8dc2b939850bb86",
+          "directory": "D:\\Users\\Axeuh\\Desktop\\Axeuh-server\\server\\Axeuh-home-system\\ai",
+          "path": "ai",
+          "parentID": "ses_13ae9e163ffe8Yrj6Mmg5DNGDm",
+          "summary": {
+            "additions": 0,
+            "deletions": 0,
+            "files": 0
+          },
+          "cost": 0.016146625600000006,
+          "tokens": {
+            "input": 58104,
+            "output": 9140,
+            "reasoning": 10439,
+            "cache": {
+              "read": 903552,
+              "write": 0
+            }
+          },
+          "title": "子智能体-18点 16~18时 (@general subagent)",
+          "agent": "general",
+          "model": {
+            "id": "deepseek-v4-flash",
+            "providerID": "deepseek",
+            "variant": "default"
+          },
+          "version": "1.17.7",
+          "time": {
+            "created": 1781949655476,
+            "updated": 1781949910409
+          },
+          "permission": [
+            {
+              "permission": "task",
+              "pattern": "*",
+              "action": "deny"
+            },
+            {
+              "permission": "call_omo_agent",
+              "pattern": "*",
+              "action": "allow"
+            },
+            {
+              "permission": "question",
+              "pattern": "*",
+              "action": "deny"
+            }
+          ],
+          "session_id": "ses_11b86164bffeHAvcmnEP5HnUGV"
+        },
+        {
+          "id": "ses_11bf4224affeOEwWMbe0ghJn38",
+          "slug": "sunny-sailor",
+          "projectID": "9493310a74c40f97bb240ea0b8dc2b939850bb86",
+          "directory": "D:\\Users\\Axeuh\\Desktop\\Axeuh-server\\server\\Axeuh-home-system\\ai",
+          "path": "ai",
+          "parentID": "ses_13ae9e163ffe8Yrj6Mmg5DNGDm",
+          "summary": {
+            "additions": 0,
+            "deletions": 0,
+            "files": 0
+          },
+          "cost": 0.028038275999999997,
+          "tokens": {
+            "input": 132627,
+            "output": 8446,
+            "reasoning": 16046,
+            "cache": {
+              "read": 933120,
+              "write": 0
+            }
+          },
+          "title": "子智能体-16点 14~16时 (@general subagent)",
+          "agent": "general",
+          "model": {
+            "id": "deepseek-v4-flash",
+            "providerID": "deepseek",
+            "variant": "default"
+          },
+          "version": "1.17.7",
+          "time": {
+            "created": 1781942443445,
+            "updated": 1781942757719
+          },
+          "permission": [
+            {
+              "permission": "task",
+              "pattern": "*",
+              "action": "deny"
+            },
+            {
+              "permission": "call_omo_agent",
+              "pattern": "*",
+              "action": "allow"
+            },
+            {
+              "permission": "question",
+              "pattern": "*",
+              "action": "deny"
+            }
+          ],
+          "session_id": "ses_11bf4224affeOEwWMbe0ghJn38"
+        },
+        {
+          "id": "ses_11c6258acffeMPa31Jma8OPs20",
+          "slug": "curious-panda",
+          "projectID": "9493310a74c40f97bb240ea0b8dc2b939850bb86",
+          "directory": "D:\\Users\\Axeuh\\Desktop\\Axeuh-server\\server\\Axeuh-home-system\\ai",
+          "path": "ai",
+          "parentID": "ses_13ae9e163ffe8Yrj6Mmg5DNGDm",
+          "summary": {
+            "additions": 0,
+            "deletions": 0,
+            "files": 0
+          },
+          "cost": 0.0130877488,
+          "tokens": {
+            "input": 52822,
+            "output": 5896,
+            "reasoning": 6490,
+            "cache": {
+              "read": 794496,
+              "write": 0
+            }
+          },
+          "title": "子智能体-14点 12~14时 (@general subagent)",
+          "agent": "general",
+          "model": {
+            "id": "deepseek-v4-flash",
+            "providerID": "deepseek",
+            "variant": "default"
+          },
+          "version": "1.17.7",
+          "time": {
+            "created": 1781935220563,
+            "updated": 1781935392497
+          },
+          "permission": [
+            {
+              "permission": "task",
+              "pattern": "*",
+              "action": "deny"
+            },
+            {
+              "permission": "call_omo_agent",
+              "pattern": "*",
+              "action": "allow"
+            },
+            {
+              "permission": "question",
+              "pattern": "*",
+              "action": "deny"
+            }
+          ],
+          "session_id": "ses_11c6258acffeMPa31Jma8OPs20"
+        },
+        {
+          "id": "ses_11ccf94ebffeMP2xxpDMoO7H0R",
+          "slug": "calm-cabin",
+          "projectID": "9493310a74c40f97bb240ea0b8dc2b939850bb86",
+          "directory": "D:\\Users\\Axeuh\\Desktop\\Axeuh-server\\server\\Axeuh-home-system\\ai",
+          "path": "ai",
+          "parentID": "ses_13ae9e163ffe8Yrj6Mmg5DNGDm",
+          "summary": {
+            "additions": 0,
+            "deletions": 0,
+            "files": 0
+          },
+          "cost": 0.012762288,
+          "tokens": {
+            "input": 64568,
+            "output": 7059,
+            "reasoning": 1571,
+            "cache": {
+              "read": 466560,
+              "write": 0
+            }
+          },
+          "title": "子智能体-12点 10~12时 (@general subagent)",
+          "agent": "general",
+          "model": {
+            "id": "deepseek-v4-flash",
+            "providerID": "deepseek",
+            "variant": "default"
+          },
+          "version": "1.17.7",
+          "time": {
+            "created": 1781928061716,
+            "updated": 1781928192367
+          },
+          "permission": [
+            {
+              "permission": "task",
+              "pattern": "*",
+              "action": "deny"
+            },
+            {
+              "permission": "call_omo_agent",
+              "pattern": "*",
+              "action": "allow"
+            },
+            {
+              "permission": "question",
+              "pattern": "*",
+              "action": "deny"
+            }
+          ],
+          "session_id": "ses_11ccf94ebffeMP2xxpDMoO7H0R"
+        },
+        {
+          "id": "ses_11d3e281affeGTZeojiCWZidnJ",
+          "slug": "shiny-lagoon",
+          "projectID": "9493310a74c40f97bb240ea0b8dc2b939850bb86",
+          "directory": "D:\\Users\\Axeuh\\Desktop\\Axeuh-server\\server\\Axeuh-home-system\\ai",
+          "path": "ai",
+          "parentID": "ses_13ae9e163ffe8Yrj6Mmg5DNGDm",
+          "summary": {
+            "additions": 0,
+            "deletions": 0,
+            "files": 0
+          },
+          "cost": 0.011829686400000003,
+          "tokens": {
+            "input": 39444,
+            "output": 5277,
+            "reasoning": 5735,
+            "cache": {
+              "read": 1151488,
+              "write": 0
+            }
+          },
+          "title": "子智能体-10点 08~10时 (@general subagent)",
+          "agent": "general",
+          "model": {
+            "id": "deepseek-v4-flash",
+            "providerID": "deepseek",
+            "variant": "default"
+          },
+          "version": "1.17.7",
+          "time": {
+            "created": 1781920815078,
+            "updated": 1781920970467
+          },
+          "permission": [
+            {
+              "permission": "task",
+              "pattern": "*",
+              "action": "deny"
+            },
+            {
+              "permission": "call_omo_agent",
+              "pattern": "*",
+              "action": "allow"
+            },
+            {
+              "permission": "question",
+              "pattern": "*",
+              "action": "deny"
+            }
+          ],
+          "session_id": "ses_11d3e281affeGTZeojiCWZidnJ"
+        },
+        {
+          "id": "ses_11dabfd79ffeqaUTBEsvJuT9gs",
+          "slug": "clever-lagoon",
+          "projectID": "9493310a74c40f97bb240ea0b8dc2b939850bb86",
+          "directory": "D:\\Users\\Axeuh\\Desktop\\Axeuh-server\\server\\Axeuh-home-system\\ai",
+          "path": "ai",
+          "parentID": "ses_13ae9e163ffe8Yrj6Mmg5DNGDm",
+          "summary": {
+            "additions": 0,
+            "deletions": 0,
+            "files": 0
+          },
+          "cost": 0.0060573576,
+          "tokens": {
+            "input": 18683,
+            "output": 2352,
+            "reasoning": 6754,
+            "cache": {
+              "read": 318592,
+              "write": 0
+            }
+          },
+          "title": "子智能体-08点 06~08时 (@general subagent)",
+          "agent": "general",
+          "model": {
+            "id": "deepseek-v4-flash",
+            "providerID": "deepseek",
+            "variant": "default"
+          },
+          "version": "1.17.7",
+          "time": {
+            "created": 1781913617030,
+            "updated": 1781913720465
+          },
+          "permission": [
+            {
+              "permission": "task",
+              "pattern": "*",
+              "action": "deny"
+            },
+            {
+              "permission": "call_omo_agent",
+              "pattern": "*",
+              "action": "allow"
+            },
+            {
+              "permission": "question",
+              "pattern": "*",
+              "action": "deny"
+            }
+          ],
+          "session_id": "ses_11dabfd79ffeqaUTBEsvJuT9gs"
+        },
+        {
+          "id": "ses_11e19c697ffewSkdI391Nk4f6n",
+          "slug": "misty-tiger",
+          "projectID": "9493310a74c40f97bb240ea0b8dc2b939850bb86",
+          "directory": "D:\\Users\\Axeuh\\Desktop\\Axeuh-server\\server\\Axeuh-home-system\\ai",
+          "path": "ai",
+          "parentID": "ses_13ae9e163ffe8Yrj6Mmg5DNGDm",
+          "summary": {
+            "additions": 0,
+            "deletions": 0,
+            "files": 0
+          },
+          "cost": 0.0028178584,
+          "tokens": {
+            "input": 9745,
+            "output": 1761,
+            "reasoning": 517,
+            "cache": {
+              "read": 291328,
+              "write": 0
+            }
+          },
+          "title": "子智能体-06点 04~06时 (@general subagent)",
+          "agent": "general",
+          "model": {
+            "id": "deepseek-v4-flash",
+            "providerID": "deepseek",
+            "variant": "default"
+          },
+          "version": "1.17.7",
+          "time": {
+            "created": 1781906422120,
+            "updated": 1781906469536
+          },
+          "permission": [
+            {
+              "permission": "task",
+              "pattern": "*",
+              "action": "deny"
+            },
+            {
+              "permission": "call_omo_agent",
+              "pattern": "*",
+              "action": "allow"
+            },
+            {
+              "permission": "question",
+              "pattern": "*",
+              "action": "deny"
+            }
+          ],
+          "session_id": "ses_11e19c697ffewSkdI391Nk4f6n"
+        },
+        {
+          "id": "ses_11e87bc64ffe3LBboTdvMmPDCU",
+          "slug": "curious-river",
+          "projectID": "9493310a74c40f97bb240ea0b8dc2b939850bb86",
+          "directory": "D:\\Users\\Axeuh\\Desktop\\Axeuh-server\\server\\Axeuh-home-system\\ai",
+          "path": "ai",
+          "parentID": "ses_13ae9e163ffe8Yrj6Mmg5DNGDm",
+          "summary": {
+            "additions": 0,
+            "deletions": 0,
+            "files": 0
+          },
+          "cost": 0.010092264000000002,
+          "tokens": {
+            "input": 46530,
+            "output": 2480,
+            "reasoning": 2958,
+            "cache": {
+              "read": 734080,
+              "write": 0
+            }
+          },
+          "title": "子智能体-04点 00~04时 (@general subagent)",
+          "agent": "general",
+          "model": {
+            "id": "deepseek-v4-flash",
+            "providerID": "deepseek",
+            "variant": "default"
+          },
+          "version": "1.17.7",
+          "time": {
+            "created": 1781899215771,
+            "updated": 1781899297746
+          },
+          "permission": [
+            {
+              "permission": "task",
+              "pattern": "*",
+              "action": "deny"
+            },
+            {
+              "permission": "call_omo_agent",
+              "pattern": "*",
+              "action": "allow"
+            },
+            {
+              "permission": "question",
+              "pattern": "*",
+              "action": "deny"
+            }
+          ],
+          "session_id": "ses_11e87bc64ffe3LBboTdvMmPDCU"
+        },
+        {
+          "id": "ses_11ef59946ffem5kptuUbgdBC2U",
+          "slug": "calm-forest",
+          "projectID": "9493310a74c40f97bb240ea0b8dc2b939850bb86",
+          "directory": "D:\\Users\\Axeuh\\Desktop\\Axeuh-server\\server\\Axeuh-home-system\\ai",
+          "path": "ai",
+          "parentID": "ses_13ae9e163ffe8Yrj6Mmg5DNGDm",
+          "summary": {
+            "additions": 0,
+            "deletions": 0,
+            "files": 0
+          },
+          "cost": 0.019145240800000005,
+          "tokens": {
+            "input": 108293,
+            "output": 2666,
+            "reasoning": 2012,
+            "cache": {
+              "read": 955136,
+              "write": 0
+            }
+          },
+          "title": "复盘子智能体-06-19 (@general subagent)",
+          "agent": "general",
+          "model": {
+            "id": "deepseek-v4-flash",
+            "providerID": "deepseek",
+            "variant": "default"
+          },
+          "version": "1.17.7",
+          "time": {
+            "created": 1781892015801,
+            "updated": 1781892095530
+          },
+          "permission": [
+            {
+              "permission": "task",
+              "pattern": "*",
+              "action": "deny"
+            },
+            {
+              "permission": "call_omo_agent",
+              "pattern": "*",
+              "action": "allow"
+            },
+            {
+              "permission": "question",
+              "pattern": "*",
+              "action": "deny"
+            }
+          ],
+          "session_id": "ses_11ef59946ffem5kptuUbgdBC2U"
+        },
+        {
+          "id": "ses_11f62a3a3ffeUO1YeLL3wOWWza",
+          "slug": "tidy-eagle",
+          "projectID": "9493310a74c40f97bb240ea0b8dc2b939850bb86",
+          "directory": "D:\\Users\\Axeuh\\Desktop\\Axeuh-server\\server\\Axeuh-home-system\\ai",
+          "path": "ai",
+          "parentID": "ses_13ae9e163ffe8Yrj6Mmg5DNGDm",
+          "summary": {
+            "additions": 0,
+            "deletions": 0,
+            "files": 0
+          },
+          "cost": 0.016863991199999998,
+          "tokens": {
+            "input": 88533,
+            "output": 4598,
+            "reasoning": 6093,
+            "cache": {
+              "read": 527104,
+              "write": 0
+            }
+          },
+          "title": "子智能体-00点 22~00时 (@general subagent)",
+          "agent": "general",
+          "model": {
+            "id": "deepseek-v4-flash",
+            "providerID": "deepseek",
+            "variant": "default"
+          },
+          "version": "1.17.7",
+          "time": {
+            "created": 1781884869724,
+            "updated": 1781884984104
+          },
+          "permission": [
+            {
+              "permission": "task",
+              "pattern": "*",
+              "action": "deny"
+            },
+            {
+              "permission": "call_omo_agent",
+              "pattern": "*",
+              "action": "allow"
+            },
+            {
+              "permission": "question",
+              "pattern": "*",
+              "action": "deny"
+            }
+          ],
+          "session_id": "ses_11f62a3a3ffeUO1YeLL3wOWWza"
+        },
+        {
+          "id": "ses_11fd090b8ffe5tw4abWw2AH352",
+          "slug": "clever-lagoon",
+          "projectID": "9493310a74c40f97bb240ea0b8dc2b939850bb86",
+          "directory": "D:\\Users\\Axeuh\\Desktop\\Axeuh-server\\server\\Axeuh-home-system\\ai",
+          "path": "ai",
+          "parentID": "ses_13ae9e163ffe8Yrj6Mmg5DNGDm",
+          "summary": {
+            "additions": 0,
+            "deletions": 0,
+            "files": 0
+          },
+          "cost": 0.0171335696,
+          "tokens": {
+            "input": 76260,
+            "output": 7406,
+            "reasoning": 6895,
+            "cache": {
+              "read": 876032,
+              "write": 0
+            }
+          },
+          "title": "子智能体-22点 20~22时 (@general subagent)",
+          "agent": "general",
+          "model": {
+            "id": "deepseek-v4-flash",
+            "providerID": "deepseek",
+            "variant": "default"
+          },
+          "version": "1.17.7",
+          "time": {
+            "created": 1781877665607,
+            "updated": 1781877847539
+          },
+          "permission": [
+            {
+              "permission": "task",
+              "pattern": "*",
+              "action": "deny"
+            },
+            {
+              "permission": "call_omo_agent",
+              "pattern": "*",
+              "action": "allow"
+            },
+            {
+              "permission": "question",
+              "pattern": "*",
+              "action": "deny"
+            }
+          ],
+          "session_id": "ses_11fd090b8ffe5tw4abWw2AH352"
+        },
+        {
+          "id": "ses_1203ef8c6ffe4vfwQQwrJcBJw7",
+          "slug": "silent-mountain",
+          "projectID": "9493310a74c40f97bb240ea0b8dc2b939850bb86",
+          "directory": "D:\\Users\\Axeuh\\Desktop\\Axeuh-server\\server\\Axeuh-home-system\\ai",
+          "path": "ai",
+          "parentID": "ses_13ae9e163ffe8Yrj6Mmg5DNGDm",
+          "summary": {
+            "additions": 0,
+            "deletions": 0,
+            "files": 0
+          },
+          "cost": 0.017216472,
+          "tokens": {
+            "input": 77936,
+            "output": 4774,
+            "reasoning": 10123,
+            "cache": {
+              "read": 762240,
+              "write": 0
+            }
+          },
+          "title": "子智能体-20点 18~20时 (@general subagent)",
+          "agent": "general",
+          "model": {
+            "id": "deepseek-v4-flash",
+            "providerID": "deepseek",
+            "variant": "default"
+          },
+          "version": "1.17.7",
+          "time": {
+            "created": 1781870430010,
+            "updated": 1781870617537
+          },
+          "permission": [
+            {
+              "permission": "task",
+              "pattern": "*",
+              "action": "deny"
+            },
+            {
+              "permission": "call_omo_agent",
+              "pattern": "*",
+              "action": "allow"
+            },
+            {
+              "permission": "question",
+              "pattern": "*",
+              "action": "deny"
+            }
+          ],
+          "session_id": "ses_1203ef8c6ffe4vfwQQwrJcBJw7"
+        },
+        {
+          "id": "ses_120ac793fffeHtCPUvYXArcIN1",
+          "slug": "calm-canyon",
+          "projectID": "9493310a74c40f97bb240ea0b8dc2b939850bb86",
+          "directory": "D:\\Users\\Axeuh\\Desktop\\Axeuh-server\\server\\Axeuh-home-system\\ai",
+          "path": "ai",
+          "parentID": "ses_13ae9e163ffe8Yrj6Mmg5DNGDm",
+          "summary": {
+            "additions": 0,
+            "deletions": 0,
+            "files": 0
+          },
+          "cost": 0.015393028,
+          "tokens": {
+            "input": 69991,
+            "output": 4732,
+            "reasoning": 10230,
+            "cache": {
+              "read": 501760,
+              "write": 0
+            }
+          },
+          "title": "子智能体-18点 16~18时 (@general subagent)",
+          "agent": "general",
+          "model": {
+            "id": "deepseek-v4-flash",
+            "providerID": "deepseek",
+            "variant": "default"
+          },
+          "version": "1.17.7",
+          "time": {
+            "created": 1781863253696,
+            "updated": 1781863436442
+          },
+          "permission": [
+            {
+              "permission": "task",
+              "pattern": "*",
+              "action": "deny"
+            },
+            {
+              "permission": "call_omo_agent",
+              "pattern": "*",
+              "action": "allow"
+            },
+            {
+              "permission": "question",
+              "pattern": "*",
+              "action": "deny"
+            }
+          ],
+          "session_id": "ses_120ac793fffeHtCPUvYXArcIN1"
+        }
+      ],
+      "current_session": null
+    }
+  }
+}

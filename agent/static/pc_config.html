@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PC 感知配置</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --card: #161b22;
+    --border: #30363d;
+    --text: #e6edf3;
+    --text-secondary: #8b949e;
+    --accent: #58a6ff;
+    --green: #3fb950;
+    --red: #f85149;
+    --yellow: #d29922;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    padding: 24px;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  h1 { font-size: 22px; margin-bottom: 6px; }
+  .subtitle { color: var(--text-secondary); font-size: 14px; margin-bottom: 24px; }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .card-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 16px;
+  }
+  .row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .row:last-child { border-bottom: none; }
+  .label { font-size: 14px; }
+  .desc { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+
+  /* Toggle Switch */
+  .toggle {
+    position: relative;
+    width: 44px;
+    height: 24px;
+    flex-shrink: 0;
+  }
+  .toggle input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  .toggle .slider {
+    position: absolute;
+    cursor: pointer;
+    inset: 0;
+    background: #21262d;
+    border-radius: 24px;
+    transition: 0.2s;
+  }
+  .toggle .slider::before {
+    content: "";
+    position: absolute;
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background: var(--text-secondary);
+    border-radius: 50%;
+    transition: 0.2s;
+  }
+  .toggle input:checked + .slider { background: var(--accent); }
+  .toggle input:checked + .slider::before {
+    transform: translateX(20px);
+    background: #fff;
+  }
+
+  /* Input */
+  input[type="text"],
+  input[type="number"] {
+    background: #0d1117;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    padding: 6px 10px;
+    font-size: 13px;
+    width: 200px;
+    outline: none;
+    transition: border 0.2s;
+  }
+  input[type="text"]:focus,
+  input[type="number"]:focus {
+    border-color: var(--accent);
+  }
+
+  /* Button */
+  .btn {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 20px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .btn:hover { opacity: 0.85; }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-group { display: flex; gap: 8px; margin-top: 16px; }
+
+  /* Status */
+  .status-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 6px;
+  }
+  .status-dot.on { background: var(--green); }
+  .status-dot.off { background: var(--red); }
+  .status-dot.pending { background: var(--yellow); }
+
+  .status-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .stat-item {
+    background: #0d1117;
+    border-radius: 6px;
+    padding: 12px;
+    text-align: center;
+  }
+  .stat-value { font-size: 20px; font-weight: 600; }
+  .stat-label { font-size: 12px; color: var(--text-secondary); margin-top: 4px; }
+
+  /* Events Table */
+  .events-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+  .events-table th {
+    text-align: left;
+    color: var(--text-secondary);
+    padding: 6px 8px;
+    border-bottom: 1px solid var(--border);
+    font-weight: 500;
+  }
+  .events-table td {
+    padding: 6px 8px;
+    border-bottom: 1px solid var(--border);
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 11px;
+  }
+  .events-table tr:hover { background: #0d1117; }
+  .event-type {
+    display: inline-block;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 600;
+  }
+  .event-type.window { background: #1f6feb33; color: #58a6ff; }
+  .event-type.idle { background: #d2992233; color: #d29922; }
+  .event-type.screen { background: #3fb95033; color: #3fb950; }
+
+  .tab-bar {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 16px;
+    background: #0d1117;
+    border-radius: 8px;
+    padding: 4px;
+  }
+  .tab {
+    flex: 1;
+    text-align: center;
+    padding: 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--text-secondary);
+    transition: 0.2s;
+  }
+  .tab.active {
+    background: var(--card);
+    color: var(--text);
+  }
+  .tab:hover { color: var(--text); }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  .toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: var(--green);
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-size: 13px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+  }
+  .toast.show { opacity: 1; }
+  .toast.error { background: var(--red); }
+
+  .section-sep {
+    border-top: 1px dashed var(--border);
+    margin: 16px 0;
+    padding-top: 12px;
+  }
+</style>
+</head>
+<body>
+
+<h1>PC 感知配置</h1>
+<p class="subtitle">配置电脑数据采集，感知数据将上报到服务器</p>
+
+<div class="tab-bar">
+  <div class="tab active" data-tab="settings">设置</div>
+  <div class="tab" data-tab="status">状态</div>
+  <div class="tab" data-tab="events">事件日志</div>
+</div>
+
+<!-- ========== 设置面板 ========== -->
+<div class="tab-content active" id="tab-settings">
+  <div class="card">
+    <div class="card-title">全局开关</div>
+    <div class="row">
+      <div>
+        <div class="label">启用 PC 感知</div>
+        <div class="desc">开启后将采集窗口、无人和屏幕状态数据</div>
+      </div>
+      <label class="toggle">
+        <input type="checkbox" id="enabled">
+        <span class="slider"></span>
+      </label>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">服务器连接</div>
+    <div class="row">
+      <div>
+        <div class="label">服务器地址</div>
+        <div class="desc">默认为 https://(占位符)</div>
+      </div>
+      <input type="text" id="server_url" placeholder="https://(占位符)">
+    </div>
+    <div class="row">
+      <div>
+        <div class="label">登录用户名</div>
+        <div class="desc">后端的账号</div>
+      </div>
+      <input type="text" id="username" placeholder="输入用户名">
+    </div>
+    <div class="row">
+      <div>
+        <div class="label">登录密码</div>
+        <div class="desc">后端的密码</div>
+      </div>
+      <input type="password" id="password" placeholder="输入密码">
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">采集设置</div>
+    <div class="row">
+      <div>
+        <div class="label">聚焦窗口</div>
+        <div class="desc">检测当前前台窗口变化</div>
+      </div>
+      <label class="toggle">
+        <input type="checkbox" id="window_enabled">
+        <span class="slider"></span>
+      </label>
+    </div>
+    <div class="row">
+      <div>
+        <div class="label">无人检测</div>
+        <div class="desc">无操作超过阈值后标记无人</div>
+      </div>
+      <label class="toggle">
+        <input type="checkbox" id="idle_enabled">
+        <span class="slider"></span>
+      </label>
+    </div>
+    <div class="row">
+      <div>
+        <div class="label">屏幕锁屏</div>
+        <div class="desc">检测屏幕锁定/解锁状态</div>
+      </div>
+      <label class="toggle">
+        <input type="checkbox" id="screen_enabled">
+        <span class="slider"></span>
+      </label>
+    </div>
+    <div class="row">
+      <div>
+        <div class="label">空闲阈值</div>
+        <div class="desc">无操作多少秒后判定为无人</div>
+      </div>
+      <input type="number" id="idle_threshold" min="30" max="3600" style="width:100px">
+    </div>
+  </div>
+
+  <div class="btn-group">
+    <button class="btn" onclick="saveConfig()">保存配置</button>
+    <button class="btn" style="background:var(--border);color:var(--text);" onclick="loadConfig()">刷新</button>
+  </div>
+</div>
+
+<!-- ========== 状态面板 ========== -->
+<div class="tab-content" id="tab-status">
+  <div class="card">
+    <div class="card-title">运行状态</div>
+    <div class="status-grid">
+      <div class="stat-item">
+        <div class="stat-value" id="s_running">--</div>
+        <div class="stat-label">采集器</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value" id="s_window">--</div>
+        <div class="stat-label">窗口追踪</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value" id="s_idle">--</div>
+        <div class="stat-label">无人检测</div>
+      </div>
+      <div class="stat-item">
+    <div class="stat-value" id="s_queue">--</div>
+    <div class="stat-label">队列待发</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-value" id="s_login">--</div>
+    <div class="stat-label">登录状态</div>
+  </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">当前窗口</div>
+    <div id="current_window" style="font-size:14px;color:var(--text-secondary);">
+      等待采集...
+    </div>
+  </div>
+</div>
+
+<!-- ========== 事件日志 ========== -->
+<div class="tab-content" id="tab-events">
+  <div class="card">
+    <div class="card-title" style="display:flex;justify-content:space-between;align-items:center;">
+      <span>最近事件</span>
+      <span style="font-weight:400;font-size:12px;cursor:pointer;color:var(--accent);" onclick="refreshEvents()">刷新</span>
+    </div>
+    <div id="events_list" style="color:var(--text-secondary);font-size:13px;">
+      暂无事件数据
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ============ API 调用 ============
+async function apiGet(path) {
+  const resp = await fetch(path);
+  if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+  return resp.json();
+}
+
+async function apiPost(path, data) {
+  const resp = await fetch(path, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+  return resp.json();
+}
+
+function showToast(msg, isError) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (isError ? ' error' : '');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ============ 配置 ============
+async function loadConfig() {
+  try {
+    const cfg = await apiGet('/pc-sensor/config');
+    document.getElementById('enabled').checked = cfg.enabled || false;
+    document.getElementById('server_url').value = cfg.server_url || 'https://(占位符)';
+    document.getElementById('username').value = cfg.username || '';
+    document.getElementById('password').value = cfg.password === '******' ? '' : (cfg.password || '');
+    document.getElementById('window_enabled').checked = cfg.window_enabled !== false;
+    document.getElementById('idle_enabled').checked = cfg.idle_enabled !== false;
+    document.getElementById('screen_enabled').checked = cfg.screen_enabled !== false;
+    document.getElementById('idle_threshold').value = cfg.idle_threshold || 300;
+  } catch (e) {
+    showToast('加载配置失败: ' + e.message, true);
+  }
+}
+
+async function saveConfig() {
+  const btn = document.querySelector('.btn');
+  btn.disabled = true;
+  btn.textContent = '保存中...';
+  try {
+    const pwd = document.getElementById('password').value;
+    const data = {
+      enabled: document.getElementById('enabled').checked,
+      server_url: document.getElementById('server_url').value.trim(),
+      username: document.getElementById('username').value.trim(),
+      idle_threshold: parseInt(document.getElementById('idle_threshold').value) || 300,
+      window_enabled: document.getElementById('window_enabled').checked,
+      idle_enabled: document.getElementById('idle_enabled').checked,
+      screen_enabled: document.getElementById('screen_enabled').checked,
+    };
+    // 如果密码框有输入则传新密码，否则保留旧密码
+    if (pwd) {
+      data.password = pwd;
+    }
+    const result = await apiPost('/pc-sensor/config', data);
+    if (result.success) {
+      showToast('配置已保存');
+      loadStatus();
+    } else {
+      showToast('保存失败', true);
+    }
+  } catch (e) {
+    showToast('保存失败: ' + e.message, true);
+  }
+  btn.disabled = false;
+  btn.textContent = '保存配置';
+}
+
+// ============ 状态 ============
+function statusDot(on) {
+  return `<span class="status-dot ${on ? 'on' : 'off'}"></span>${on ? '运行中' : '已停止'}`;
+}
+
+async function loadStatus() {
+  try {
+    const st = await apiGet('/pc-sensor/status');
+    document.getElementById('s_running').innerHTML = statusDot(st.running);
+    document.getElementById('s_window').innerHTML = statusDot(st.window);
+    document.getElementById('s_idle').innerHTML = statusDot(st.idle);
+    document.getElementById('s_queue').textContent = st.queue_size || 0;
+    document.getElementById('s_login').innerHTML = st.logged_in ? '<span class="status-dot on"></span>已登录' : '<span class="status-dot off"></span>未登录';
+
+    // 显示当前窗口（从最近事件中提取）
+    if (st.last_events && st.last_events.length > 0) {
+      const lastWin = st.last_events.slice().reverse().find(e => e.type === 'pc_window');
+      if (lastWin && lastWin.payload) {
+        document.getElementById('current_window').innerHTML =
+          `<strong style="color:var(--text)">${escapeHtml(lastWin.payload.process || '')}</strong>
+           <span style="color:var(--text-secondary)"> - ${escapeHtml(lastWin.payload.title || '')}</span>`;
+      }
+    }
+  } catch (e) {
+    showToast('获取状态失败', true);
+  }
+}
+
+// ============ 事件日志 ============
+function escapeHtml(s) {
+  if (!s) return '';
+  const div = document.createElement('div');
+  div.textContent = s;
+  return div.innerHTML;
+}
+
+function formatEvent(data) {
+  const type = data.type || 'unknown';
+  const payload = data.payload || {};
+  let cls = 'window';
+  if (type === 'pc_idle') cls = 'idle';
+  if (type === 'pc_screen') cls = 'screen';
+
+  let summary = '';
+  if (type === 'pc_window') {
+    summary = `${payload.process || '?'} - ${(payload.title || '').substring(0, 60)}`;
+  } else if (type === 'pc_idle') {
+    summary = payload.state === 'idle'
+      ? `空闲 (${payload.idle_seconds}s)`
+      : '恢复使用';
+  } else if (type === 'pc_screen') {
+    summary = payload.state === 'lock' ? '屏幕锁定' : '屏幕解锁';
+  } else {
+    summary = JSON.stringify(payload);
+  }
+
+  return `<tr>
+    <td><span class="event-type ${cls}">${type.replace('pc_', '')}</span></td>
+    <td>${escapeHtml(data.t || '')}</td>
+    <td>${escapeHtml(summary)}</td>
+  </tr>`;
+}
+
+async function refreshEvents() {
+  try {
+    const st = await apiGet('/pc-sensor/status');
+    const events = st.last_events || [];
+    const el = document.getElementById('events_list');
+
+    if (events.length === 0) {
+      el.innerHTML = '<div style="color:var(--text-secondary);text-align:center;padding:20px;">暂无事件数据</div>';
+      return;
+    }
+
+    const rows = events.slice().reverse().map(formatEvent).join('');
+    el.innerHTML = `<table class="events-table">
+      <thead><tr><th>类型</th><th>时间</th><th>内容</th></tr></thead>
+      <tbody>${rows}</tbody></table>`;
+  } catch (e) {
+    showToast('获取事件失败', true);
+  }
+}
+
+// ============ Tab 切换 ============
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+  });
+});
+
+// ============ 定时刷新 ============
+// 状态面板每 5 秒自动刷新
+setInterval(() => {
+  const statusTab = document.querySelector('[data-tab="status"]');
+  if (statusTab && statusTab.classList.contains('active')) {
+    loadStatus();
+  }
+}, 5000);
+
+// 事件面板每 10 秒自动刷新
+setInterval(() => {
+  const eventsTab = document.querySelector('[data-tab="events"]');
+  if (eventsTab && eventsTab.classList.contains('active')) {
+    refreshEvents();
+  }
+}, 10000);
+
+// ============ 初始化 ============
+loadConfig();
+loadStatus();
+refreshEvents();
+</script>
+</body>
+</html>

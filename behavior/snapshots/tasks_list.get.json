@@ -1,0 +1,455 @@
+{
+  "meta": {
+    "recorded_at": "2026-06-20T18:31:08.783839+00:00",
+    "method": "GET",
+    "path": "/api/screen/tasks",
+    "note": "List scheduled tasks",
+    "python": "D:\\ProgramData\\miniconda3\\envs\\axeuh-multi-agent\\python.exe"
+  },
+  "request": {
+    "method": "GET",
+    "path": "/api/screen/tasks",
+    "headers": {}
+  },
+  "response": {
+    "status_code": 200,
+    "headers": {
+      "date": "Sat, 20 Jun 2026 18:31:08 GMT",
+      "server": "uvicorn",
+      "content-length": "16990",
+      "content-type": "application/json"
+    },
+    "body": {
+      "tasks": [
+        {
+          "task_id": "task_new_04check",
+          "user_id": "default",
+          "task_name": "数据检查_04点",
+          "prompt": "【数据检查 - 数据检查_04点】 按子智能体调度流程执行, 覆盖时段: 00:00~04:00。\n不要自己写理解, 按以下流程执行： 1. 运行: python ai/analysis/fact_extractor.py {日期} --hours 00:00~04:00 2. 启动子智能体: task(subagent_type=\"general\", load_skills=[], prompt=\"请阅读 ai/agents/01-data-check.md 执行。参数: date={日期}, start=00:00, end=04:00) 3. 子智能体自行运行 check_coverage.py 4. 漏时段自行补充 5. 自行 git add/commit 6. 主智能体验收 ",
+          "schedule_type": "scheduled",
+          "schedule_config": {
+            "hour": 4,
+            "minute": 0
+          },
+          "enabled": true,
+          "repeat": true,
+          "created_at": 1781289000.0,
+          "last_run": 1781899202.05188,
+          "next_run": 1781985600.0,
+          "run_count": 16,
+          "target_type": "main_task",
+          "target_session": null,
+          "prefix_config": {
+            "use_custom": true,
+            "speaker": "数据助手",
+            "prompt": "这是后台数据检查任务。不要TTS回复，不要等待用户响应，直接执行分析并更新理解文件。",
+            "message_type": "数据检查",
+            "location": "系统"
+          }
+        },
+        {
+          "task_id": "task_5d5437bb79b7",
+          "user_id": "default",
+          "task_name": "数据检查_06点",
+          "prompt": "【数据检查 - 数据检查_06点】 按子智能体调度流程执行, 覆盖时段: 04:00~06:00。\n不要自己写理解, 按以下流程执行： 1. 运行: python ai/analysis/fact_extractor.py {日期} --hours 04:00~06:00 2. 启动子智能体: task(subagent_type=\"general\", load_skills=[], prompt=\"请阅读 ai/agents/01-data-check.md 执行。参数: date={日期}, start=04:00, end=06:00) 3. 子智能体自行运行 check_coverage.py 4. 漏时段自行补充 5. 自行 git add/commit 6. 主智能体验收 ",
+          "schedule_type": "scheduled",
+          "schedule_config": {
+            "hour": 6,
+            "minute": 0
+          },
+          "enabled": true,
+          "repeat": true,
+          "created_at": 1780975508.987744,
+          "last_run": 1781906401.413818,
+          "next_run": 1781992800.0,
+          "run_count": 22,
+          "target_type": "main_task",
+          "target_session": null,
+          "prefix_config": {
+            "use_custom": true,
+            "speaker": "数据助手",
+            "prompt": "这是后台数据检查任务。不要TTS回复，不要等待用户响应，直接执行分析并更新理解文件。",
+            "message_type": "数据检查",
+            "location": "系统"
+          }
+        },
+        {
+          "task_id": "task_81a178c7c320",
+          "user_id": "default",
+          "task_name": "数据检查_08点",
+          "prompt": "【数据检查 - 数据检查_08点】 按子智能体调度流程执行, 覆盖时段: 06:00~08:00。\n不要自己写理解, 按以下流程执行： 1. 运行: python ai/analysis/fact_extractor.py {日期} --hours 06:00~08:00 2. 启动子智能体: task(subagent_type=\"general\", load_skills=[], prompt=\"请阅读 ai/agents/01-data-check.md 执行。参数: date={日期}, start=06:00, end=08:00) 3. 子智能体自行运行 check_coverage.py 4. 漏时段自行补充 5. 自行 git add/commit 6. 主智能体验收 ",
+          "schedule_type": "scheduled",
+          "schedule_config": {
+            "hour": 8,
+            "minute": 0
+          },
+          "enabled": true,
+          "repeat": true,
+          "created_at": 1780975508.987744,
+          "last_run": 1781913601.110333,
+          "next_run": 1782000000.0,
+          "run_count": 22,
+          "target_type": "main_task",
+          "target_session": null,
+          "prefix_config": {
+            "use_custom": true,
+            "speaker": "数据助手",
+            "prompt": "这是后台数据检查任务。不要TTS回复，不要等待用户响应，直接执行分析并更新理解文件。",
+            "message_type": "数据检查",
+            "location": "系统"
+          }
+        },
+        {
+          "task_id": "task_f74426a5ec7d",
+          "user_id": "default",
+          "task_name": "数据检查_10点",
+          "prompt": "【数据检查 - 数据检查_10点】 按子智能体调度流程执行, 覆盖时段: 08:00~10:00。\n不要自己写理解, 按以下流程执行： 1. 运行: python ai/analysis/fact_extractor.py {日期} --hours 08:00~10:00 2. 启动子智能体: task(subagent_type=\"general\", load_skills=[], prompt=\"请阅读 ai/agents/01-data-check.md 执行。参数: date={日期}, start=08:00, end=10:00) 3. 子智能体自行运行 check_coverage.py 4. 漏时段自行补充 5. 自行 git add/commit 6. 主智能体验收 ",
+          "schedule_type": "scheduled",
+          "schedule_config": {
+            "hour": 10,
+            "minute": 0
+          },
+          "enabled": true,
+          "repeat": true,
+          "created_at": 1780975508.987744,
+          "last_run": 1781920801.091393,
+          "next_run": 1782007200.0,
+          "run_count": 22,
+          "target_type": "main_task",
+          "target_session": null,
+          "prefix_config": {
+            "use_custom": true,
+            "speaker": "数据助手",
+            "prompt": "这是后台数据检查任务。不要TTS回复，不要等待用户响应，直接执行分析并更新理解文件。",
+            "message_type": "数据检查",
+            "location": "系统"
+          }
+        },
+        {
+          "task_id": "task_313447390e5c",
+          "user_id": "default",
+          "task_name": "数据检查_12点",
+          "prompt": "【数据检查 - 数据检查_12点】 按子智能体调度流程执行, 覆盖时段: 10:00~12:00。\n不要自己写理解, 按以下流程执行： 1. 运行: python ai/analysis/fact_extractor.py {日期} --hours 10:00~12:00 2. 启动子智能体: task(subagent_type=\"general\", load_skills=[], prompt=\"请阅读 ai/agents/01-data-check.md 执行。参数: date={日期}, start=10:00, end=12:00) 3. 子智能体自行运行 check_coverage.py 4. 漏时段自行补充 5. 自行 git add/commit 6. 主智能体验收 ",
+          "schedule_type": "scheduled",
+          "schedule_config": {
+            "hour": 12,
+            "minute": 0
+          },
+          "enabled": true,
+          "repeat": true,
+          "created_at": 1780975508.987744,
+          "last_run": 1781928000.250892,
+          "next_run": 1782014400.0,
+          "run_count": 24,
+          "target_type": "main_task",
+          "target_session": null,
+          "prefix_config": {
+            "use_custom": true,
+            "speaker": "数据助手",
+            "prompt": "这是后台数据检查任务。不要TTS回复，不要等待用户响应，直接执行分析并更新理解文件。",
+            "message_type": "数据检查",
+            "location": "系统"
+          }
+        },
+        {
+          "task_id": "task_3d0b0ba7515e",
+          "user_id": "default",
+          "task_name": "数据检查_14点",
+          "prompt": "【数据检查 - 数据检查_14点】 按子智能体调度流程执行, 覆盖时段: 12:00~14:00。\n不要自己写理解, 按以下流程执行： 1. 运行: python ai/analysis/fact_extractor.py {日期} --hours 12:00~14:00 2. 启动子智能体: task(subagent_type=\"general\", load_skills=[], prompt=\"请阅读 ai/agents/01-data-check.md 执行。参数: date={日期}, start=12:00, end=14:00) 3. 子智能体自行运行 check_coverage.py 4. 漏时段自行补充 5. 自行 git add/commit 6. 主智能体验收 ",
+          "schedule_type": "scheduled",
+          "schedule_config": {
+            "hour": 14,
+            "minute": 0
+          },
+          "enabled": true,
+          "repeat": true,
+          "created_at": 1780975508.987744,
+          "last_run": 1781935200.416721,
+          "next_run": 1782021600.0,
+          "run_count": 23,
+          "target_type": "main_task",
+          "target_session": null,
+          "prefix_config": {
+            "use_custom": true,
+            "speaker": "数据助手",
+            "prompt": "这是后台数据检查任务。不要TTS回复，不要等待用户响应，直接执行分析并更新理解文件。",
+            "message_type": "数据检查",
+            "location": "系统"
+          }
+        },
+        {
+          "task_id": "task_f7a2e802ecc2",
+          "user_id": "default",
+          "task_name": "数据检查_16点",
+          "prompt": "【数据检查 - 数据检查_16点】 按子智能体调度流程执行, 覆盖时段: 14:00~16:00。\n不要自己写理解, 按以下流程执行： 1. 运行: python ai/analysis/fact_extractor.py {日期} --hours 14:00~16:00 2. 启动子智能体: task(subagent_type=\"general\", load_skills=[], prompt=\"请阅读 ai/agents/01-data-check.md 执行。参数: date={日期}, start=14:00, end=16:00) 3. 子智能体自行运行 check_coverage.py 4. 漏时段自行补充 5. 自行 git add/commit 6. 主智能体验收 ",
+          "schedule_type": "scheduled",
+          "schedule_config": {
+            "hour": 16,
+            "minute": 0
+          },
+          "enabled": true,
+          "repeat": true,
+          "created_at": 1780975508.987744,
+          "last_run": 1781942400.178787,
+          "next_run": 1782028800.0,
+          "run_count": 24,
+          "target_type": "main_task",
+          "target_session": null,
+          "prefix_config": {
+            "use_custom": true,
+            "speaker": "数据助手",
+            "prompt": "这是后台数据检查任务。不要TTS回复，不要等待用户响应，直接执行分析并更新理解文件。",
+            "message_type": "数据检查",
+            "location": "系统"
+          }
+        },
+        {
+          "task_id": "task_1427697e0a0d",
+          "user_id": "default",
+          "task_name": "数据检查_18点",
+          "prompt": "【数据检查 - 数据检查_18点】 按子智能体调度流程执行, 覆盖时段: 16:00~18:00。\n不要自己写理解, 按以下流程执行： 1. 运行: python ai/analysis/fact_extractor.py {日期} --hours 16:00~18:00 2. 启动子智能体: task(subagent_type=\"general\", load_skills=[], prompt=\"请阅读 ai/agents/01-data-check.md 执行。参数: date={日期}, start=16:00, end=18:00) 3. 子智能体自行运行 check_coverage.py 4. 漏时段自行补充 5. 自行 git add/commit 6. 主智能体验收 ",
+          "schedule_type": "scheduled",
+          "schedule_config": {
+            "hour": 18,
+            "minute": 0
+          },
+          "enabled": true,
+          "repeat": true,
+          "created_at": 1780975508.987744,
+          "last_run": 1781949601.946771,
+          "next_run": 1782036000.0,
+          "run_count": 24,
+          "target_type": "main_task",
+          "target_session": null,
+          "prefix_config": {
+            "use_custom": true,
+            "speaker": "数据助手",
+            "prompt": "这是后台数据检查任务。不要TTS回复，不要等待用户响应，直接执行分析并更新理解文件。",
+            "message_type": "数据检查",
+            "location": "系统"
+          }
+        },
+        {
+          "task_id": "task_35cad979611e",
+          "user_id": "default",
+          "task_name": "数据检查_20点",
+          "prompt": "【数据检查 - 数据检查_20点】 按子智能体调度流程执行, 覆盖时段: 18:00~20:00。\n不要自己写理解, 按以下流程执行： 1. 运行: python ai/analysis/fact_extractor.py {日期} --hours 18:00~20:00 2. 启动子智能体: task(subagent_type=\"general\", load_skills=[], prompt=\"请阅读 ai/agents/01-data-check.md 执行。参数: date={日期}, start=18:00, end=20:00) 3. 子智能体自行运行 check_coverage.py 4. 漏时段自行补充 5. 自行 git add/commit 6. 主智能体验收 ",
+          "schedule_type": "scheduled",
+          "schedule_config": {
+            "hour": 20,
+            "minute": 0
+          },
+          "enabled": true,
+          "repeat": true,
+          "created_at": 1780975508.987744,
+          "last_run": 1781965405.907953,
+          "next_run": 1782043200.0,
+          "run_count": 23,
+          "target_type": "main_task",
+          "target_session": null,
+          "prefix_config": {
+            "use_custom": true,
+            "speaker": "数据助手",
+            "prompt": "这是后台数据检查任务。不要TTS回复，不要等待用户响应，直接执行分析并更新理解文件。",
+            "message_type": "数据检查",
+            "location": "系统"
+          }
+        },
+        {
+          "task_id": "task_65e05152ba13",
+          "user_id": "default",
+          "task_name": "数据检查_22点",
+          "prompt": "【数据检查 - 数据检查_22点】 按子智能体调度流程执行, 覆盖时段: 20:00~22:00。\n不要自己写理解, 按以下流程执行： 1. 运行: python ai/analysis/fact_extractor.py {日期} --hours 20:00~22:00 2. 启动子智能体: task(subagent_type=\"general\", load_skills=[], prompt=\"请阅读 ai/agents/01-data-check.md 执行。参数: date={日期}, start=20:00, end=22:00) 3. 子智能体自行运行 check_coverage.py 4. 漏时段自行补充 5. 自行 git add/commit 6. 主智能体验收 ",
+          "schedule_type": "scheduled",
+          "schedule_config": {
+            "hour": 22,
+            "minute": 0
+          },
+          "enabled": true,
+          "repeat": true,
+          "created_at": 1780975508.987744,
+          "last_run": 1781965405.909467,
+          "next_run": 1782050400.0,
+          "run_count": 23,
+          "target_type": "main_task",
+          "target_session": null,
+          "prefix_config": {
+            "use_custom": true,
+            "speaker": "数据助手",
+            "prompt": "这是后台数据检查任务。不要TTS回复，不要等待用户响应，直接执行分析并更新理解文件。",
+            "message_type": "数据检查",
+            "location": "系统"
+          }
+        },
+        {
+          "task_id": "task_new_00check",
+          "user_id": "default",
+          "task_name": "数据检查_00点",
+          "prompt": "【数据检查 - 数据检查_00点】 按子智能体调度流程执行, 覆盖前一天最后2小时: 22:00~00:00。 注意: 日期用前一天(不是今天)。\n不要自己写理解, 按以下流程执行： 1. 运行: python ai/analysis/fact_extractor.py 前一天的日期 --hours 22:00~00:00 2. 启动子智能体: task(subagent_type=\"general\", load_skills=[], prompt=\"请阅读 ai/agents/01-data-check.md 执行。参数: date=前一天的日期, start=22:00, end=00:00\") 3. 运行: python ai/analysis/check_coverage.py 前一天的日期 4. 子智能体自行验证覆盖、git commit 5. 主智能体验收 ",
+          "schedule_type": "scheduled",
+          "schedule_config": {
+            "hour": 0,
+            "minute": 0
+          },
+          "enabled": true,
+          "repeat": true,
+          "created_at": 1781289000.0,
+          "last_run": 1781971200.186075,
+          "next_run": 1782057600.0,
+          "run_count": 15,
+          "target_type": "main_task",
+          "target_session": null,
+          "prefix_config": {
+            "use_custom": true,
+            "speaker": "数据助手",
+            "prompt": "这是后台数据检查任务。不要TTS回复，不要等待用户响应，直接执行分析并更新理解文件。",
+            "message_type": "数据检查",
+            "location": "系统"
+          }
+        },
+        {
+          "task_id": "task_1c9c9c615d23",
+          "user_id": "default",
+          "task_name": "今日复盘",
+          "prompt": "【今日复盘】 按复盘子智能体调度流程执行。\n1. 运行: python ai/analysis/check_coverage.py {昨天日期} 2. 启动子智能体: task(subagent_type=\"general\", load_skills=[], prompt=\"请阅读 ai/agents/02-daily-review.md 执行。参数: date={昨天日期}\")\n注意：复盘的目标日期是昨天（不是今天）。 3. 子智能体自行验收复盘报告后运行 git add/commit 4. 主智能体只需确认复盘文件存在 ",
+          "schedule_type": "scheduled",
+          "schedule_config": {
+            "hour": 2,
+            "minute": 0
+          },
+          "enabled": true,
+          "repeat": true,
+          "created_at": 1780975508.987744,
+          "last_run": 1781978401.287079,
+          "next_run": 1782064800.0,
+          "run_count": 23,
+          "target_type": "main_task",
+          "target_session": null,
+          "prefix_config": {
+            "use_custom": true,
+            "speaker": "复盘分析师",
+            "prompt": "这是后台复盘任务。不要TTS回复，不要等待用户响应，直接执行分析并写入文件。",
+            "message_type": "每日复盘",
+            "location": "系统"
+          }
+        },
+        {
+          "task_id": "task_deep_review",
+          "user_id": "default",
+          "task_name": "双周深度回顾",
+          "prompt": "【双周深度回顾 - 每月1日/15日 14:00执行】 按子智能体调度流程执行。\n启动子智能体: task(subagent_type=\"general\", load_skills=[], prompt=\"请阅读 ai/agents/03-biweekly-review.md 执行。参数: 自行扫描 data/ 目录决定起止日期\")\n注意：自行确定日期范围（检查 data/ 目录下有哪些日期有理解文件）。 3. 自行验收后运行 git add/commit 4. 主智能体只需确认文件存在 ",
+          "schedule_type": "scheduled",
+          "schedule_config": {
+            "mode": "monthly",
+            "hour": 14,
+            "minute": 30,
+            "days": [
+              1,
+              15
+            ]
+          },
+          "enabled": true,
+          "repeat": true,
+          "created_at": 1781506020.0,
+          "last_run": 1781504400.0,
+          "next_run": 1782887400.0,
+          "run_count": 1,
+          "target_type": "main_task",
+          "target_session": null,
+          "prefix_config": {
+            "use_custom": true,
+            "speaker": "数据助手",
+            "prompt": "这是后台分析任务。不要TTS回复，不要等待用户响应，直接执行深度分析并写入文件。",
+            "message_type": "深度回顾",
+            "location": "系统"
+          }
+        },
+        {
+          "task_id": "task_bdbdb5e8c194",
+          "user_id": "default",
+          "task_name": "周报总结",
+          "prompt": "【周报总结 - 每周一03:00执行】 按子智能体调度流程执行。\n启动子智能体: task(subagent_type=\"general\", load_skills=[], prompt=\"请阅读 ai/agents/04-weekly-review.md 执行。参数: start_date=上周一, end_date=上周日\")\n注意：上周一~上周日共7天。自行扫描 data/ 目录确认日期范围。 3. 自行验收后运行 git add/commit 4. 主智能体只需确认文件存在 ",
+          "schedule_type": "scheduled",
+          "schedule_config": {
+            "mode": "weekly",
+            "hour": 3,
+            "minute": 0,
+            "days": [
+              1
+            ]
+          },
+          "enabled": true,
+          "repeat": true,
+          "created_at": 1780975508.987744,
+          "last_run": 1781486393.40972,
+          "next_run": 1782068400.0,
+          "run_count": 1,
+          "target_type": "main_task",
+          "target_session": null,
+          "prefix_config": {
+            "title": null,
+            "description": null,
+            "use_custom": true,
+            "speaker": "数据分析师",
+            "prompt": "这是后台周报总结任务。不要TTS回复，不要等待用户响应，直接执行分析并写入文件。",
+            "message_type": "周报总结",
+            "location": "系统"
+          }
+        },
+        {
+          "task_id": "task_lunch_suggest",
+          "user_id": "default",
+          "task_name": "午餐建议",
+          "prompt": "【午餐建议】 快到饭点了，看一下今天有没有提过想吃什么。\n翻今天的理解文件，看有没有讨论过吃啥、支付记录里有没外卖、位置在哪。 结合记忆里的口味偏好，发通知推荐。不确定就直接问想吃啥。",
+          "schedule_type": "scheduled",
+          "schedule_config": {
+            "hour": 10,
+            "minute": 30
+          },
+          "enabled": true,
+          "repeat": true,
+          "created_at": 1781780160.0,
+          "last_run": 1781922600.259169,
+          "next_run": 1782009000.0,
+          "run_count": 4,
+          "target_type": "main_task",
+          "target_session": null,
+          "prefix_config": {
+            "use_custom": true,
+            "speaker": "小贺同学",
+            "prompt": "这是日常建议任务。用自然语气发通知推荐午餐。",
+            "message_type": "日常建议",
+            "location": "系统"
+          }
+        },
+        {
+          "task_id": "task_dinner_suggest",
+          "user_id": "default",
+          "task_name": "晚餐建议",
+          "prompt": "【晚餐建议】 快到饭点了，看一下今天有没有提过想吃什么。\n翻今天的理解文件，看有没有讨论过吃啥、支付记录里有没外卖、位置在哪。 结合记忆里的口味偏好，发通知推荐。不确定就直接问想吃啥。",
+          "schedule_type": "scheduled",
+          "schedule_config": {
+            "hour": 16,
+            "minute": 30
+          },
+          "enabled": true,
+          "repeat": true,
+          "created_at": 1781780160.0,
+          "last_run": 1781944202.018249,
+          "next_run": 1782030600.0,
+          "run_count": 6,
+          "target_type": "main_task",
+          "target_session": null,
+          "prefix_config": {
+            "use_custom": true,
+            "speaker": "小贺同学",
+            "prompt": "这是日常建议任务。用自然语气发通知推荐晚餐。",
+            "message_type": "日常建议",
+            "location": "系统"
+          }
+        }
+      ],
+      "total": 16
+    }
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "meta": {
+    "recorded_at": "2026-06-20T18:31:08.705505+00:00",
+    "method": "POST",
+    "path": "/login",
+    "note": "Login success (returns token)",
+    "python": "D:\\ProgramData\\miniconda3\\envs\\axeuh-multi-agent\\python.exe"
+  },
+  "request": {
+    "method": "POST",
+    "path": "/login",
+    "headers": {},
+    "body": {
+      "username": "Axeuh",
+      "password": "20071011"
+    }
+  },
+  "response": {
+    "status_code": 200,
+    "headers": {
+      "date": "Sat, 20 Jun 2026 18:31:08 GMT",
+      "server": "uvicorn",
+      "content-length": "136",
+      "content-type": "application/json"
+    },
+    "body": {
+      "success": true,
+      "token": "4TRLFeXGtaPuVUZxNny3e7YaxJyx_H0wtY3J6z2LbIU",
+      "user_id": "Axeuh",
+      "display_name": "Axeuh",
+      "message": "登录成功"
+    }
+  }
+}

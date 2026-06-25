@@ -1,0 +1,85 @@
+# ============================================================================
+# Axeuh Health Monitor - 配置文件
+# ============================================================================
+# 配置优先级: config.local.yaml（同目录）> config.yaml > 默认值
+#
+# 新手快速起步:
+#   1. 生成 SSL 自签名证书（见 README），填入 ssl.cert / ssl.key
+#   2. 从对应平台获取 API Key 填入 api.*
+#   3. 设置 auth.username / auth.password_hash
+#   4. 其它用默认值即可启动
+# ============================================================================
+
+# ─── 服务端口 ───────────────────────────────────────────────────────────────
+server:
+  host: 0.0.0.0          # 监听地址（0.0.0.0 = 所有网卡）
+  https_port: 1256        # HTTPS 端口（生产环境使用）
+
+# ─── OpenCode AI 引擎 ──────────────────────────────────────────────────────
+opencode:
+  port: 5090                          # OpenCode 服务端口（自动拼接 http://127.0.0.1:{port}）
+  directory: ai                       # AI 工作目录（相对项目根）
+  default_model: deepseek-v4-flash    # 默认 AI 模型
+  default_provider: deepseek          # 模型提供商
+
+# ─── 功能开关 ───────────────────────────────────────────────────────────────
+features:
+  # 启用 OpenCode 模拟模式（调试用，不连接真实 AI 服务）
+  opencode_mock_enabled: false
+
+# ─── SSL/TLS 证书 ──────────────────────────────────────────────────────────
+ssl:
+  enabled: true                  # SSL/HTTPS 开关（设为 false 则使用 HTTP），强烈建议开启，且app依赖https
+  cert: path/to/your/cert.pem   # SSL 证书路径（绝对或相对项目根）
+  key:  path/to/your/key.pem    # SSL 私钥路径
+
+# ─── 第三方 API 密钥 ───────────────────────────────────────────────────────
+api:
+  # 小米 MiMo API Key（用于 TTS 语音合成）
+  # 获取: https://mimo.xiaomi.com/
+  mimo_key: YOUR_MIMO_API_KEY
+
+  # 百度地图 AK（用于 GPS 逆地理编码，可选）
+  # 获取: https://lbsyun.baidu.com/apiconsole/key
+  baidu_map_ak: ""
+
+# ─── 用户认证 ──────────────────────────────────────────────────────────────
+auth:
+  username: admin                    # 登录用户名
+  password_hash: ""                  # bcrypt 加密的密码哈希值（留空则在首次启动时设置）
+
+# ─── 启动器路径 ─────────────────────────────────────────────────────────────
+launcher:
+  # Python 解释器路径（conda 环境下为 conda 的 python.exe）
+  conda_python: D:\ProgramData\miniconda3\envs\axeuh-multi-agent\python.exe
+  # OpenCode CLI 路径
+  opencode_cmd: C:\Users\Administrator\AppData\Roaming\npm\opencode.cmd
+
+# ─── 数据目录（默认相对于项目根目录，可用绝对路径覆盖）─────────────────────
+data:
+  # 数据存储根目录（健康数据、感知数据等）
+  dir: ai/data
+  # 用户会话列表 JSON 文件路径
+  sessions: ai/data/usersessions.json
+  # 定时任务数据目录
+  tasks: ai/data
+  # 声纹特征库文件路径
+  voiceprints: ai/data/voiceprints.json
+  # AI 工作根目录（用于 WebView 文件浏览器）
+  ai_root: ai
+  # 用户上传文件存储目录
+  upload_dir: ai/data/uploads
+
+# ─── 自定义脚本 ─────────────────────────────────────────────────────────────
+scripts:
+  # AI 自动执行的 Python 脚本目录
+  dir: ai/data/tasks
+
+# ─── OTA 更新 ───────────────────────────────────────────────────────────────
+ota:
+  # Android APK 构建产物目录（assembleDebug 的输出位置）
+  apk_dir: app/build/outputs/apk/debug
+
+# ─── 日志 ──────────────────────────────────────────────────────────────────
+log:
+  level: INFO     # 日志级别: DEBUG / INFO / WARNING / ERROR / CRITICAL

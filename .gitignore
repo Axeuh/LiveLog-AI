@@ -1,0 +1,64 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+*.egg
+
+# npm / Node
+node_modules/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.kotlin/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Android build
+.gradle/
+build/
+app/build/
+*.apk
+*.iml
+local.properties
+
+# Runtime config (not template)
+backend/config/config.yaml
+backend/config/config.local.yaml
+backend/config/auth.json
+
+# env
+.env
+backend/.env
+
+# Logs
+*.log
+backend/logs/
+
+# Temp files
+*.tmp
+*.temp
+
+# ML model files
+backend/models/*.pth
+
+# Runtime data
+backend/data/
+backend/outputs/
+backend/usersessions.json
+backend/storage/
+ai/data/tasks/logs/
+ai/data/*.json
+ai-template/
+demo/
+
+# Test reports
+playwright-report/
+test-results/

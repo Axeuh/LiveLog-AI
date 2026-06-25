@@ -1,0 +1,9 @@
+{
+  "agent_id": "default-agent",
+  "agent_name": "My PC",
+  "server_host": "0.0.0.0",
+  "server_port": 18888,
+  "agent_token": "change-me-to-a-secure-token",
+  "server_url": "wss://localhost:(占位符)/ws/agent",
+  "_comment": "本地用 wss://localhost:(占位符)/ws/agent；同局域网用 wss://内网IP:(占位符)/ws/agent"
+}

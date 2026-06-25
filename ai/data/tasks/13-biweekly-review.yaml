@@ -1,0 +1,14 @@
+﻿name: 双周深度回顾
+schedule:
+  monthly:
+    1: "14:30"
+    15: "14:30"
+enabled: false
+prompt: |-
+  【双周深度回顾 - 每月1日/15日 14:00执行】 按子智能体调度流程执行。
+
+  启动子智能体: task(subagent_type="general", load_skills=[], prompt="请阅读 ai/agents/03-biweekly-review.md 执行。参数: 自行扫描 data/ 目录决定起止日期")
+
+  注意：自行确定日期范围（检查 data/ 目录下有哪些日期有理解文件）。
+  3. 自行验收后运行 git add/commit
+  4. 主智能体只需确认文件存在

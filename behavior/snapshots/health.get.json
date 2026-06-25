@@ -1,0 +1,27 @@
+{
+  "meta": {
+    "recorded_at": "2026-06-20T18:31:08.698371+00:00",
+    "method": "GET",
+    "path": "/health",
+    "note": "Health check endpoint",
+    "python": "D:\\ProgramData\\miniconda3\\envs\\axeuh-multi-agent\\python.exe"
+  },
+  "request": {
+    "method": "GET",
+    "path": "/health",
+    "headers": {}
+  },
+  "response": {
+    "status_code": 200,
+    "headers": {
+      "date": "Sat, 20 Jun 2026 18:31:08 GMT",
+      "server": "uvicorn",
+      "content-length": "53",
+      "content-type": "application/json"
+    },
+    "body": {
+      "status": "healthy",
+      "service": "axeuh-health-monitor"
+    }
+  }
+}

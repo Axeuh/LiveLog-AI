@@ -1,0 +1,75 @@
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.12) transparent;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+:focus,
+:focus-visible {
+  outline: none;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  font-family: 'Noto Sans SC', 'Plus Jakarta Sans', sans-serif;
+  background: #0a0a12;
+  color: var(--text);
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  height: 100%;
+  -webkit-font-smoothing: antialiased;
+}
+
+.app {
+  width: 100%;
+  max-width: 480px;
+  height: 100dvh;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  margin: 0 auto;
+  overflow: hidden;
+  z-index: 1;
+}
+
+@media (min-width: 481px) {
+  body {
+    background: #07070e;
+  }
+
+  .app {
+    border-left: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
+  }
+}

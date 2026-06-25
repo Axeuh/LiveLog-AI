@@ -1,0 +1,15 @@
+﻿name: 数据检查_16点
+schedule:
+  daily: "16:00"
+enabled: false
+prompt: |-
+  【数据检查 - 数据检查_16点】 按子智能体调度流程执行, 覆盖时段: 14:00~16:00。
+
+  不要自己写理解, 按以下流程执行：
+  1. 运行: python ai/analysis/fact_extractor.py {日期} --hours 14:00~16:00
+  2. 启动子智能体: task(subagent_type="general", load_skills=[], prompt="请阅读 ai/agents/01-data-check.md 执行。参数: date={日期}, start=14:00, end=16:00)
+  3. 子智能体自行运行 check_coverage.py
+  4. 漏时段自行补充
+  5. 自行 git add/commit
+  6. 主智能体验收（不需要发通知；子智能体也不发送通知）
+  7. 启动反馈子智能体: task(subagent_type="general", load_skills=[], prompt="请阅读 ai/agents/05-feedback-agent.md 执行。参数: date={日期}, period={当前时段}")

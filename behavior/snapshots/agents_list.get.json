@@ -1,0 +1,85 @@
+{
+  "meta": {
+    "recorded_at": "2026-06-20T18:31:09.632963+00:00",
+    "method": "GET",
+    "path": "/api/agents/list",
+    "note": "List registered remote agents",
+    "python": "D:\\ProgramData\\miniconda3\\envs\\axeuh-multi-agent\\python.exe"
+  },
+  "request": {
+    "method": "GET",
+    "path": "/api/agents/list",
+    "headers": {}
+  },
+  "response": {
+    "status_code": 200,
+    "headers": {
+      "date": "Sat, 20 Jun 2026 18:31:09 GMT",
+      "server": "uvicorn",
+      "content-length": "1096",
+      "content-type": "application/json"
+    },
+    "body": [
+      {
+        "agent_id": "default-agent",
+        "agent_name": "我的电脑",
+        "capabilities": [
+          "screenshot",
+          "file",
+          "exec",
+          "system_info"
+        ],
+        "status": "offline",
+        "connected_at": "2026-06-15T19:57:23.252307",
+        "last_heartbeat": "2026-06-15T20:04:53.311475",
+        "user_id": null
+      },
+      {
+        "agent_id": "test",
+        "agent_name": "test",
+        "capabilities": [],
+        "status": "offline",
+        "connected_at": "2026-05-10T10:26:15.142536",
+        "last_heartbeat": "2026-05-10T10:26:15.142536",
+        "user_id": null
+      },
+      {
+        "agent_id": "test_long",
+        "agent_name": "test_long",
+        "capabilities": [],
+        "status": "offline",
+        "connected_at": "2026-05-10T10:27:51.489223",
+        "last_heartbeat": "2026-05-10T10:28:21.554291",
+        "user_id": null
+      },
+      {
+        "agent_id": "工作电脑-agent",
+        "agent_name": "我的电脑",
+        "capabilities": [
+          "screenshot",
+          "file",
+          "exec",
+          "system_info"
+        ],
+        "status": "offline",
+        "connected_at": "2026-05-10T10:32:20.997518",
+        "last_heartbeat": "2026-05-10T11:00:21.518220",
+        "user_id": null
+      },
+      {
+        "agent_id": "工作-agent",
+        "agent_name": "我的电脑",
+        "capabilities": [
+          "screenshot",
+          "file",
+          "exec",
+          "system_info"
+        ],
+        "status": "offline",
+        "connected_at": "2026-05-30T12:59:29.104799",
+        "last_heartbeat": "2026-05-30T13:56:30.127030",
+        "user_id": null
+      }
+    ]
+  }
+}

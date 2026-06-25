@@ -1,0 +1,28 @@
+{
+  "meta": {
+    "recorded_at": "2026-06-20T18:31:08.902430+00:00",
+    "method": "GET",
+    "path": "/api/screen/speakers",
+    "note": "List registered voiceprints",
+    "python": "D:\\ProgramData\\miniconda3\\envs\\axeuh-multi-agent\\python.exe"
+  },
+  "request": {
+    "method": "GET",
+    "path": "/api/screen/speakers",
+    "headers": {}
+  },
+  "response": {
+    "status_code": 200,
+    "headers": {
+      "date": "Sat, 20 Jun 2026 18:31:08 GMT",
+      "server": "uvicorn",
+      "content-length": "39",
+      "content-type": "application/json"
+    },
+    "body": {
+      "status": "ok",
+      "count": 0,
+      "speakers": []
+    }
+  }
+}

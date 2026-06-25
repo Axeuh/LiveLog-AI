@@ -1,0 +1,33 @@
+{
+  "meta": {
+    "recorded_at": "2026-06-20T18:31:08.879071+00:00",
+    "method": "GET",
+    "path": "/api/notification/poll",
+    "note": "Poll pending notifications",
+    "python": "D:\\ProgramData\\miniconda3\\envs\\axeuh-multi-agent\\python.exe"
+  },
+  "request": {
+    "method": "GET",
+    "path": "/api/notification/poll",
+    "headers": {}
+  },
+  "response": {
+    "status_code": 200,
+    "headers": {
+      "date": "Sat, 20 Jun 2026 18:31:08 GMT",
+      "server": "uvicorn",
+      "content-length": "85",
+      "content-type": "application/json"
+    },
+    "body": {
+      "notifications": [
+        {
+          "id": 1,
+          "title": "Test",
+          "content": "Hello",
+          "created_at": 1781980268
+        }
+      ]
+    }
+  }
+}

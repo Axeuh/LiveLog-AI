@@ -1,0 +1,33 @@
+{
+  "meta": {
+    "recorded_at": "2026-06-20T18:31:08.860252+00:00",
+    "method": "POST",
+    "path": "/api/notification/send",
+    "note": "Send a notification",
+    "python": "D:\\ProgramData\\miniconda3\\envs\\axeuh-multi-agent\\python.exe"
+  },
+  "request": {
+    "method": "POST",
+    "path": "/api/notification/send",
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "title": "Test",
+      "content": "Hello"
+    }
+  },
+  "response": {
+    "status_code": 200,
+    "headers": {
+      "date": "Sat, 20 Jun 2026 18:31:08 GMT",
+      "server": "uvicorn",
+      "content-length": "35",
+      "content-type": "application/json"
+    },
+    "body": {
+      "status": "ok",
+      "notification_id": 1
+    }
+  }
+}

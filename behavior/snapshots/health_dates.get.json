@@ -1,0 +1,43 @@
+{
+  "meta": {
+    "recorded_at": "2026-06-20T18:31:08.797995+00:00",
+    "method": "GET",
+    "path": "/api/health/dates",
+    "note": "List dates with health data",
+    "python": "D:\\ProgramData\\miniconda3\\envs\\axeuh-multi-agent\\python.exe"
+  },
+  "request": {
+    "method": "GET",
+    "path": "/api/health/dates",
+    "headers": {}
+  },
+  "response": {
+    "status_code": 200,
+    "headers": {
+      "date": "Sat, 20 Jun 2026 18:31:08 GMT",
+      "server": "uvicorn",
+      "content-length": "219",
+      "content-type": "application/json"
+    },
+    "body": {
+      "dates": [
+        "2026-06-06",
+        "2026-06-07",
+        "2026-06-08",
+        "2026-06-09",
+        "2026-06-10",
+        "2026-06-11",
+        "2026-06-12",
+        "2026-06-13",
+        "2026-06-14",
+        "2026-06-15",
+        "2026-06-16",
+        "2026-06-17",
+        "2026-06-18",
+        "2026-06-19",
+        "2026-06-20",
+        "2026-06-21"
+      ]
+    }
+  }
+}

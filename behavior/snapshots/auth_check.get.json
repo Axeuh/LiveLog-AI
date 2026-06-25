@@ -1,0 +1,27 @@
+{
+  "meta": {
+    "recorded_at": "2026-06-20T18:31:08.777621+00:00",
+    "method": "GET",
+    "path": "/auth/check",
+    "note": "Auth check with token",
+    "python": "D:\\ProgramData\\miniconda3\\envs\\axeuh-multi-agent\\python.exe"
+  },
+  "request": {
+    "method": "GET",
+    "path": "/auth/check",
+    "headers": {}
+  },
+  "response": {
+    "status_code": 200,
+    "headers": {
+      "date": "Sat, 20 Jun 2026 18:31:08 GMT",
+      "server": "uvicorn",
+      "content-length": "40",
+      "content-type": "application/json"
+    },
+    "body": {
+      "authenticated": true,
+      "user_id": "Axeuh"
+    }
+  }
+}
