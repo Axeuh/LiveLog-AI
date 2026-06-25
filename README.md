@@ -158,9 +158,7 @@ OpenCode 支持所有兼容 OpenAI API 的模型提供商（DeepSeek、Anthropic
 | **Silero VAD**                                            | 语音活动检测（VAD，语音预分段）     | silero_vad 包       | pip 时已包含          |
 | **funasr ERes2NetV2**                                     | 声纹嵌入提取（说话人识别）          | funasr / modelscope | 自动下载              |
 
-上述模型不安装不影响后端启动，仅音频分析、声纹识别、场景感知功能降级。推荐手动下载和确认依赖。
-
-tts如果需要换成本地或其他，可以自己实现。
+上述模型不安装不影响后端启动，仅音频分析、声纹识别、场景感知功能降级。TTS 如需替换为本地或其他服务，可自行实现 `backend/services/tts_player.py`。
 
 ### 其他
 
@@ -289,7 +287,7 @@ launcher:
 
 前端已预构建，`frontend/mobile/dist/` 目录已包含编译产物，后端会自动在 `/mobile/` 路径下提供。
 
-**无需额外操作。** 后端运行后访问 `http://<服务器IP>:<端口>/mobile/` 即可看到健康看板页面。
+**无需额外操作。** 后端运行后访问 `https://<服务器IP>:<端口>/mobile/` 即可看到健康看板页面（开发模式 HTTP 亦可）。
 
 如需自行构建：
 
@@ -337,9 +335,9 @@ cd app
 https://<你的服务器IP>:<端口>
 ```
 
-- 局域网：`https://192.168.x.x:1256`
-- 公网：`https://你的域名:1256`
-- 本地测试：`https://localhost:8767`
+- 局域网：`https://192.168.x.x:<端口>`（端口与 config.yaml 中 `https_port` 一致）
+- 公网：`https://你的域名:<端口>`
+- 本地测试：`https://localhost:8767`（Android App 默认端口）
 
 点击"保存并测试连接"，等待显示"连接成功"。
 
@@ -467,7 +465,7 @@ Axeuh App 设置 → 数据采集 → 手环数据库路径
 
 ### AI 分析（OpenCode）
 
-OpenCode 是本系统的**核心组件**，所有 AI 功能依赖它运行。系统使用 [Oh My OpenAgent](https://github.com/your-tools/oh-my-openagent) 管理 OpenCode，利用其自动加载各子目录 `AGENTS.md` 的机制组织 AI 智能体上下文，并借助 `opencode-dcp` 插件赋予 AI 自主修剪上下文的能力，避免长对话时上下文超限。
+OpenCode 是本系统的**核心组件**，所有 AI 功能依赖它运行。系统使用 Oh My OpenAgent 管理 OpenCode，利用其自动加载各子目录 `AGENTS.md` 的机制组织 AI 智能体上下文，并借助 `opencode-dcp` 插件赋予 AI 自主修剪上下文的能力，避免长对话时上下文超限。
 
 安装 OpenCode 和 Oh My OpenAgent 后，在 `config.yaml` 中配置：
 
