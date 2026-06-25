@@ -80,6 +80,7 @@ sequenceDiagram
     participant A as Axeuh App
     participant S as 后端服务器
     participant AI as OpenCode AI
+    participant T as TTS语音
 
     B->>G: BLE 连接
     G->>G: SQLite 数据库
@@ -97,7 +98,13 @@ sequenceDiagram
         S->>AI: 调用分析任务
         AI->>AI: 数据检查 / 日报 / 周报
         AI-->>S: 分析结果
-        S-->>A: 推送通知
+        S-->>A: 推送通知推送分析结果
+    end
+
+    alt TTS 播报
+        S->>T: /api/screen/tts/speak
+        T->>S: 语音合成完成
+        S-->>A: 音频播放指令
     end
 ```
 
