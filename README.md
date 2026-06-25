@@ -479,9 +479,11 @@ opencode:
 
 The launcher (`launcher.py`) will start OpenCode automatically. If OpenCode cannot start, the TaskScheduler will fail to initialize and the backend will not run properly.
 
-#### AI Architecture at a Glance
+Once started, the AI system runs **fully automatically** -- no manual intervention needed. It collects data, processes it, generates reports, manages its own memory, and pushes insights to your phone. Every step in the pipeline is automated.
 
-The AI system uses a **three-layer architecture** to process your data:
+#### Automated Pipeline Architecture
+
+The AI uses a **three-layer architecture** to process your data autonomously:
 
 ```mermaid
 graph LR
@@ -502,19 +504,23 @@ graph LR
     DR --> MA
 ```
 
-#### 17 Scheduled Tasks
+- **Script Layer** runs automatically every cycle, converting raw data into readable formats and verifying completeness.
+- **Sub-Agent Layer** spawns specialized agents to write understanding records, generate reports, and harvest memories.
+- **Main Agent Layer** orchestrates everything, verifies outputs, and self-optimizes the workflow over time.
 
-The backend task scheduler polls every second and triggers AI tasks at configured times:
+#### 17 Automation Tasks
 
-| Task Group | Count | Frequency | Purpose |
-|------------|-------|-----------|---------|
-| Data check | 12 | Every 2 hours | Each checks a 2-hour window, keeps analysis real-time |
-| Daily review | 1 | Daily at 02:00 | Full-day retrospective report + memory harvesting |
-| Bi-weekly review | 1 | 1st & 16th of month | Cross-day deep pattern analysis |
-| Weekly summary | 1 | Sunday | Narrative summary of the week |
-| Study coach | 3 | Workday mornings, afternoons, evenings | Learning progress tracking and encouragement |
+The system runs a set of automated tasks around the clock. Each task is a self-contained pipeline that triggers, processes, analyzes, and commits without human involvement:
 
-Each data check task runs the same pipeline: `fact_extractor.py` preprocesses raw data → `01-data-check` sub-agent writes understanding records → `check_coverage.py` verifies no time gaps were missed → git commit.
+| Task Group | Count | Cycle | Automation Scope |
+|------------|-------|-------|-----------------|
+| Data checks | 12 | Every 2 hours | Auto-preprocess → auto-analyze → auto-verify → auto-commit |
+| Daily review | 1 | Daily | Auto-read → auto-cross-check → auto-report → auto-memory-harvest → auto-notify |
+| Bi-weekly review | 1 | 1st & 16th | Auto-scan 14 days → auto-pattern-analysis → auto-report |
+| Weekly summary | 1 | Sunday | Auto-compile 7 days → auto-narrative → auto-report |
+| Study coach | 3 | Workday mornings/afternoons/evenings | Auto-track → auto-encourage → auto-notify |
+
+Each data check is a fully automated pipeline: `fact_extractor.py` preprocesses raw data → `01-data-check` sub-agent writes understanding records → `check_coverage.py` verifies completeness → git commit — all without human intervention.
 
 #### 6 Specialized Sub-Agents
 
