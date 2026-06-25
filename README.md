@@ -30,10 +30,10 @@ graph TB
 
     subgraph Backend[后端 - FastAPI]
         AUTH[AuthMiddleware<br/>Token 认证]
-        HEALTH[/api/health/*<br/>健康数据同步/查询]
-        PERCEPTION[/api/perception/*<br/>感知数据接收]
-        TTS[/api/screen/tts/*<br/>语音合成]
-        STORE[文件存储<br/>ai/data/{date}/]
+        HEALTH["/api/health/*<br/>健康数据同步/查询"]
+        PERCEPTION["/api/perception/*<br/>感知数据接收"]
+        TTS["/api/screen/tts/*<br/>语音合成"]
+        STORE["文件存储<br/>ai/data/{date}/"]
         GATEWAY[OpenCode Gateway<br/>AI 调用桥接]
         SCHED[TaskScheduler<br/>定时任务调度]
     end
