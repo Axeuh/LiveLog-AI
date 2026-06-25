@@ -16,59 +16,63 @@
 
 ```mermaid
 graph TB
-    subgraph Android[Android App]
-        HDC[HealthDataCollector<br/>心率/步数/血氧/压力/睡眠]
-        AC[AudioCollector<br/>环境音+VAD]
-        GC[GpsCollector<br/>GPS定位]
-        SSC[SystemStateCollector<br/>屏幕/网络/电量]
-        NC[NotificationCollector<br/>通知统计]
+    subgraph DataSources[数据源]
+        BAND[小米手环] -->|BLE| GB[Gadgetbridge<br/>SQLite DB]
+        PHONE[手机传感器<br/>GPS/麦克风/屏幕]
+        PC[Windows PC<br/>待机状态/前台窗口]
     end
 
-    subgraph Backend[后端 FastAPI]
-        AM[AuthMiddleware<br/>Token认证]
-        HS[健康数据存储<br/>POST /api/health/sync]
-        PR[感知数据接收<br/>POST /api/perception/]
-        TTS[TTS语音合成<br/>MiMo API]
-        OTA[OTA更新<br/>APK远程升级]
-        TS[定时任务调度<br/>AI自动分析]
-        WV[WebView SPA<br/>GET /mobile/]
-        AR[PC状态采集<br/>待机/前台窗口]
+    subgraph AppCollect[Android App - 采集层]
+        HDC[HealthDataCollector<br/>读 Gadgetbridge 数据库]
+        SENSORS[AudioCollector / GpsCollector<br/>SystemStateCollector / NotificationCollector]
+        UPLOAD[AppHttpClient<br/>HTTPS 上传]
     end
 
-    subgraph AI[AI分析系统 - OpenCode 可选]
-        DC[每2小时数据检查]
-        DR[每日复盘]
+    subgraph Backend[后端 - FastAPI]
+        AUTH[AuthMiddleware<br/>Token 认证]
+        HEALTH[/api/health/*<br/>健康数据同步/查询]
+        PERCEPTION[/api/perception/*<br/>感知数据接收]
+        TTS[/api/screen/tts/*<br/>语音合成]
+        STORE[文件存储<br/>ai/data/{date}/]
+        GATEWAY[OpenCode Gateway<br/>AI 调用桥接]
+        SCHED[TaskScheduler<br/>定时任务调度]
+    end
+
+    subgraph Frontend[前端 - Vue 3 SPA]
+        DASH[Dashboard 健康看板]
+        REPT[Reports 分析报告]
+        SETT[Settings 设置页]
+    end
+
+    subgraph AI[AI 分析 - OpenCode 可选]
+        DC[数据检查<br/>每 2 小时]
+        DR[每日复盘<br/>每天 21:00]
         WR[周报/双周回顾]
         AD[异常检测]
+        NOTIFY[通知推送<br/>分析结果 → App]
     end
 
-    subgraph BandLayer[数据源]
-        GB[Gadgetbridge<br/>SQLite DB]
-        BAND[小米手环]
-        PHONE[手机传感器]
-    end
+    GB -->|读 SQLite| HDC
+    PHONE --> SENSORS
+    PC -.->|WebSocket| PERCEPTION
 
-    BAND -->|BLE| GB
-    GB -->|读数据库| HDC
-    PHONE --> AC
-    PHONE --> GC
-    PHONE --> SSC
-    PHONE --> NC
+    HDC --> UPLOAD
+    SENSORS --> UPLOAD
 
-    HDC -->|HTTPS POST| HS
-    AC -->|HTTPS POST| PR
-    GC -->|HTTPS POST| PR
-    SSC -->|HTTPS POST| PR
-    NC -->|HTTPS POST| PR
+    UPLOAD -->|HTTPS| HEALTH
+    UPLOAD -->|HTTPS| PERCEPTION
+    UPLOAD -->|POST /tts/speak| TTS
 
-    HS --> AI
-    PR --> AI
-    TS --> AI
+    HEALTH --> STORE
+    PERCEPTION --> STORE
+
+    STORE --> GATEWAY
+    GATEWAY --> AI
+    SCHED --> GATEWAY
+
     AI --> DC --> DR --> WR
     AI --> AD
-
-    WV -->|WebView加载| Backend
-    AR -->|WebSocket| Backend
+    AI --> NOTIFY -->|推送| UPLOAD
 ```
 
 ### 数据流
