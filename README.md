@@ -479,14 +479,109 @@ opencode:
 
 The launcher (`launcher.py`) will start OpenCode automatically. If OpenCode cannot start, the TaskScheduler will fail to initialize and the backend will not run properly.
 
-Core AI capabilities:
+#### AI Architecture at a Glance
 
-- **Scheduled data check**: Verifies data integrity every 2 hours
-- **Daily review**: Generates a full-day retrospective report at 21:00
-- **Trend analysis**: Weekly/biweekly behavioral pattern reports
-- **Anomaly detection**: Sudden heart rate changes, abnormal activity, insufficient sleep, etc.
-- **Interactive chat**: Talk to the AI through the app's session interface
-- **Push notifications**: Analysis results pushed to the app in real time
+The AI system uses a **three-layer architecture** to process your data:
+
+```mermaid
+graph LR
+    subgraph "Script Layer - Data preprocessing"
+        FE[fact_extractor.py<br/>raw JSON to readable Markdown]
+        CC[check_coverage.py<br/>verify time coverage completeness]
+    end
+    subgraph "Sub-Agent Layer - Specialized analysis"
+        DC[data-check agent<br/>writes understanding records]
+        DR[daily-review agent<br/>generates retrospective reports]
+    end
+    subgraph "Main Agent Layer - Orchestration"
+        MA[Main Agent<br/>coordinate, verify, self-optimize]
+    end
+    FE --> DC --> MA
+    CC -.->|verification check| MA
+    MA -.->|trigger| DC
+    DR --> MA
+```
+
+#### 17 Scheduled Tasks
+
+The backend task scheduler polls every second and triggers AI tasks at configured times:
+
+| Task Group | Count | Frequency | Purpose |
+|------------|-------|-----------|---------|
+| Data check | 12 | Every 2 hours | Each checks a 2-hour window, keeps analysis real-time |
+| Daily review | 1 | Daily at 02:00 | Full-day retrospective report + memory harvesting |
+| Bi-weekly review | 1 | 1st & 16th of month | Cross-day deep pattern analysis |
+| Weekly summary | 1 | Sunday | Narrative summary of the week |
+| Study coach | 3 | Workday mornings, afternoons, evenings | Learning progress tracking and encouragement |
+
+Each data check task runs the same pipeline: `fact_extractor.py` preprocesses raw data → `01-data-check` sub-agent writes understanding records → `check_coverage.py` verifies no time gaps were missed → git commit.
+
+#### 6 Specialized Sub-Agents
+
+Each sub-agent has a detailed prompt file in `ai/agents/` with precise input/output specifications:
+
+| Agent | Purpose | Output |
+|-------|---------|--------|
+| **01-data-check** | Data inspection | Writes understanding records to `{date}-理解.md` |
+| **02-daily-review** | Daily retrospective | Generates `复盘-{date}.md` report + harvests memories |
+| **03-biweekly-review** | Deep pattern analysis | Cross-day behavior pattern discovery |
+| **04-weekly-review** | Weekly narrative | Story-driven weekly timeline |
+| **05-feedback-agent** | Push notifications | Extracts valuable insights and matches user preferences |
+| **06-study-coach** | Study companion | Tracks learning progress with encouraging notifications |
+
+#### Python Custom Scripts — Extend Beyond Schedules
+
+Beyond the 17 YAML tasks, you can write Python scripts in `ai/data/tasks/` that run as long-lived loops with full control over frequency, conditions, and external integrations:
+
+```python
+"""
+name: my_automation
+enabled: true
+"""
+
+def run(context):
+    while True:
+        data = context.read_file("data/2026-06-25/perception.jsonl")
+        if data and has_condition(data):
+            context.trigger_task("分析", "触发条件满足")
+        context.heartbeat()
+        time.sleep(120)
+```
+
+**What you can do with scripts:**
+
+| Capability | Example |
+|------------|---------|
+| Custom scheduling | Only check during waking hours, reduce frequency at night |
+| Condition-based | Only trigger AI when new voice events arrive, not on every poll |
+| External API integration | Pull weather data, smart home device states |
+| Smart home automation | Detect GPS arrival → trigger arrival scene; detect sleep → night mode |
+| Cross-script communication | Multiple scripts share state via files in `ai/data/` |
+| Backend API calling | Trigger TTS announcements, push notifications via localhost |
+
+Scripts run in a sandbox (256 MB, AST-checked, heartbeat-enforced) with a `context` API for logging, file reading, AI task triggering, and error reporting. See `docs/AI_SYSTEM.md` for full details.
+
+#### Long-Term Memory System
+
+The AI maintains its own memory in `ai/记忆/`, separate from the git repository. During each daily review, it automatically harvests:
+
+- **New locations**: GPS coordinates or place names not previously recorded
+- **New preferences**: Diet, entertainment, or routine patterns appearing for the first time
+- **Social relationships**: New person names appearing in conversations
+- **Health baselines**: Sustained physiological changes (non-temporary)
+- **Experience lessons**: Reusable insights from past issues or observations
+
+#### Design Philosophy
+
+The entire AI system follows a few key principles:
+
+- **Data first**: Every conclusion must cite raw data. Analysis without source data is invalid.
+- **Honest confidence**: Every judgment must be labeled with a confidence level (certain/high/medium/low/insufficient data).
+- **Sub-agents research, main agent decides**: Sub-agents do the detailed analysis, the main agent handles coordination and decision-making.
+- **Feedback loops**: Every task completion triggers a phone notification. Anomalies and questions are pushed proactively, never waiting to be asked.
+- **Boundary awareness**: The AI is confined to the `ai/` directory — it reads perception data and writes analysis files, but never touches project source code.
+
+> Full AI system architecture documentation: [docs/AI_SYSTEM.md](docs/AI_SYSTEM.md) (Chinese)
 
 ### Windows PC Agent
 
