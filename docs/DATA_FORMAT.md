@@ -523,7 +523,7 @@ graph TD
     end
 
     subgraph "存储"
-        P --> D[ai/data/{date}/perception.jsonl]
+        P --> D["ai/data/{date}/perception.jsonl"]
         H --> D
     end
 ```
