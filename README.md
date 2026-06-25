@@ -32,7 +32,7 @@ graph TB
         OTA[OTA更新<br/>APK远程升级]
         TS[定时任务调度<br/>AI自动分析]
         WV[WebView SPA<br/>GET /mobile/]
-        AR[Agent远程管理<br/>WebSocket]
+        AR[PC状态采集<br/>待机/前台窗口]
     end
 
     subgraph AI[AI分析系统 - OpenCode 可选]
@@ -421,9 +421,11 @@ opencode:
 - 检测心率异常、睡眠不足、活动量过低等
 - 通过 App 推送通知提醒
 
-### Windows 远程 Agent
+### Windows PC Agent
 
-独立服务，提供远程 PC 管理能力（截图、文件操作、命令执行）。
+独立服务，运行在 Windows 电脑上，采集 PC 状态：
+- 系统是否待机/锁屏
+- 当前前台窗口标题
 
 ```bash
 cd agent
@@ -432,6 +434,8 @@ python agent_server.py
 ```
 
 Agent 配置在 `agent/config.json` 中，`agent_token` 用于 API 认证。
+
+> 注：Agent 代码中包含截图、文件操作、命令执行等历史遗留功能，这些功能不稳定且不再维护，不建议使用。
 
 ---
 
@@ -490,7 +494,7 @@ axeuh-health-monitor/
 │   ├── agents/                # 子智能体定义
 │   ├── analysis/              # 分析脚本
 │   └── data/tasks/            # 定时任务配置（默认禁用）
-├── agent/                     # Windows 远程 Agent
+├── agent/                     # Windows PC 状态采集
 └── scripts/                   # 工具脚本
 ```
 
