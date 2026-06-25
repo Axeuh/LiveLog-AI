@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Axeuh Health Monitor - Pytest 基础设施
+LiveLog-AI - Pytest 基础设施
 
 本文件在测试 session 启动时执行一次，完成以下工作：
 

@@ -1,6 +1,6 @@
 # API Behavior Baseline
 
-该目录记录了 `axeuh-health-monitor` 后端所有 API 端点的响应快照，
+该目录记录了 `LiveLog-AI` 后端所有 API 端点的响应快照，
 用于行为验证和回归测试。
 
 ## 目录结构

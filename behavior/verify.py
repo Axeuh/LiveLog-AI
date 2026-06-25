@@ -635,7 +635,7 @@ def _print_mismatch(details):
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Record or verify API behavior snapshots for axeuh-health-monitor"
+        description="Record or verify API behavior snapshots for LiveLog-AI"
     )
     parser.add_argument("--record", action="store_true", help="Record new snapshots")
     parser.add_argument("--port", type=int, default=CFG["port"], help=f"Port (default: {CFG['port']})")

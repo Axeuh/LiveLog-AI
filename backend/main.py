@@ -2,7 +2,7 @@
 import os
 os.environ['KMP_DUPLICATE_LIB_OK'] = 'TRUE'
 
-"""Axeuh Health Monitor - FastAPI Main Entry"""
+"""LiveLog-AI - FastAPI Main Entry"""
 from fastapi import FastAPI, Request
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -32,7 +32,7 @@ from services.script_runner import ScriptRunner, init_script_runner
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Application lifecycle"""
-    logger.info("[Axeuh Health Monitor] Starting...")
+    logger.info("[LiveLog-AI] Starting...")
     import asyncio
     loop = asyncio.get_running_loop()
     from services.event_loop_manager import set_main_loop
@@ -101,10 +101,10 @@ async def lifespan(app: FastAPI):
         if c: await c.stop()
     except Exception as e:
         logger.error(f"音频压缩服务停止失败: {e}")
-    logger.info("[Axeuh Health Monitor] Shutting down...")
+    logger.info("[LiveLog-AI] Shutting down...")
 
 
-app = FastAPI(title="Axeuh Health Monitor", description="AI Health Monitoring System API", version="1.0.0", lifespan=lifespan)
+app = FastAPI(title="LiveLog-AI", description="Self-hosted AI Personal Assistant API", version="1.0.0", lifespan=lifespan)
 
 # 统一错误处理
 from core.errors import http_exception_handler, validation_exception_handler, unhandled_exception_handler
@@ -142,7 +142,7 @@ app.include_router(scripts_router)
 
 @app.get("/health")
 async def health_check():
-    return {"status": "healthy", "service": "axeuh-health-monitor"}
+    return {"status": "healthy", "service": "LiveLog-AI"}
 
 
 # 移动端页面服务（必须放在最后）

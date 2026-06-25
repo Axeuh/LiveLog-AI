@@ -122,7 +122,7 @@
 
     <!-- 版本信息 -->
     <div class="version-info">
-      <span>Axeuh Health Monitor</span>
+      <span>LiveLog-AI</span>
       <span>v1.0.0</span>
     </div>
   </div>
@@ -170,10 +170,10 @@ function handleSavePrefix(): void {
 
 /**
  * 打开系统设置
- * 触发 axeuh://open-settings scheme，由原生 WebViewClient 拦截
+ * 触发 livelog://open-settings scheme，由原生 WebViewClient 拦截
  */
 function openSystemSettings(): void {
-  window.location.href = 'axeuh://open-settings'
+  window.location.href = 'livelog://open-settings'
 }
 
 /**

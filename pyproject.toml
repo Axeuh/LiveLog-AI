@@ -3,9 +3,9 @@ requires = ["setuptools>=68.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "axeuh-health-monitor"
+name = "LiveLog-AI"
 version = "1.1.0"
-description = "AI 驱动的健康监测系统 - Android 传感器数据采集 + FastAPI 后端 + AI 分析"
+description = "自托管的 AI 个人数据助理 - Android 传感器数据采集 + FastAPI 后端 + OpenCode AI 分析"
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "Apache-2.0" }

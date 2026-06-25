@@ -2,7 +2,7 @@
 
 ## 概览
 
-Axeuh Health Monitor 的手机端界面。运行在 Android App 的 WebView 中，提供 AI 聊天、健康看板、文件浏览、报告查看和系统设置功能。
+LiveLog-AI 的手机端界面。运行在 Android App 的 WebView 中，提供 AI 聊天、健康看板、文件浏览、报告查看和系统设置功能。
 
 ## 目录结构
 

@@ -1,4 +1,4 @@
-# Axeuh Health Monitor
+# LiveLog-AI
 
 自托管的 AI 个人数据助理。通过 Android App 持续采集手机和手环传感器数据（心率、步数、GPS、音频环境、通知、屏幕状态等），上传至私有后端存储，由 OpenCode AI 定时分析并生成洞察报告。
 
@@ -176,8 +176,8 @@ OpenCode 支持所有兼容 OpenAI API 的模型提供商（DeepSeek、Anthropic
 #### 1.1 克隆仓库
 
 ```bash
-git clone https://github.com/Axeuh/axeuh-health-monitor.git
-cd axeuh-health-monitor
+git clone https://github.com/Axeuh/LiveLog-AI.git
+cd LiveLog-AI
 ```
 
 #### 1.2 Python 环境
@@ -301,7 +301,7 @@ npm run build    # 输出到 dist/
 
 ### 第三阶段：Android App 安装
 
-从 [GitHub Releases](https://github.com/Axeuh/axeuh-health-monitor/releases) 下载最新 APK，或自行编译：
+从 [GitHub Releases](https://github.com/Axeuh/LiveLog-AI/releases) 下载最新 APK，或自行编译：
 
 ```bash
 # 编译 Debug APK
@@ -540,7 +540,7 @@ features:
 ## 目录结构
 
 ```
-axeuh-health-monitor/
+LiveLog-AI/
 ├── config.yaml                # 配置文件（项目根目录）
 ├── launcher.py                # 统一启动器
 ├── start.bat                  # Windows 一键启动

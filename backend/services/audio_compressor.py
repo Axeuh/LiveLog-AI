@@ -48,9 +48,10 @@ ARCHIVE_FILENAME = f"audio_archive.{ARCHIVE_CONTAINER}"
 
 def _ffmpeg_path() -> str:
     """查找 ffmpeg 可执行文件路径（硬编码的显式路径优先）"""
-    explicit = (
-        r"D:\Users\Axeuh\Desktop\Axeuh-server\server\axeuh-health-monitor"
-        r"\backend\bin\ffmpeg.exe"
+    # 优先从项目目录查找 ffmpeg，找不到则用系统 PATH
+    explicit = os.path.join(
+        os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+        "bin", "ffmpeg.exe"
     )
     if os.path.exists(explicit):
         return explicit

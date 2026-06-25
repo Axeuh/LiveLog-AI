@@ -1,5 +1,5 @@
 """
-Axeuh Health Monitor - Launcher
+LiveLog-AI - Launcher
 多进程架构，启动 OpenCode + uvicorn 后端并监控自动重启
 """
 
@@ -18,7 +18,7 @@ import argparse
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description='Axeuh Health Monitor Launcher')
+    parser = argparse.ArgumentParser(description='LiveLog-AI Launcher')
     parser.add_argument('--config', help='自定义配置文件路径')
     parser.add_argument('--data-dir', help='自定义数据目录')
     return parser.parse_args()
@@ -246,7 +246,7 @@ class ServiceManager:
 
     def run(self):
         """主循环：启动 OpenCode → 启动后端 → 监控自动重启"""
-        log('SYSTEM', 'Axeuh Health Monitor Launcher')
+        log('SYSTEM', 'LiveLog-AI Launcher')
 
         def handle_signal(signum, frame):
             self.running = False

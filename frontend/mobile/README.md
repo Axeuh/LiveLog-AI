@@ -1,12 +1,12 @@
-# Axeuh Health Monitor - 手机端 WebView 界面
+# LiveLog-AI - 手机端 WebView 界面
 
-基于 Vue 3 + Vite + TypeScript 构建的移动端单页应用 (SPA)，运行于 Android WebView 中，为用户提供 Axeuh Health Monitor 系统的交互界面。
+基于 Vue 3 + Vite + TypeScript 构建的移动端单页应用 (SPA)，运行于 Android WebView 中，为用户提供 LiveLog-AI 系统的交互界面。
 
 ---
 
 ## 项目概述
 
-本项目是 Axeuh Health Monitor 健康监测系统的手机端前端界面。原始版本是一个约 3950 行的单文件 SPA（`index.original.html`），已完整迁移为模块化的 Vue 3 + Vite + TypeScript 架构。
+本项目是 LiveLog-AI 健康监测系统的手机端前端界面。原始版本是一个约 3950 行的单文件 SPA（`index.original.html`），已完整迁移为模块化的 Vue 3 + Vite + TypeScript 架构。
 
 用户通过 Android App 内的 WebView 加载此界面，实现与后端 AI 服务的交互，包括实时聊天、健康看板、文件浏览、报告查看和系统设置等功能。
 
@@ -373,4 +373,4 @@ Authorization: Bearer <token>
 
 ## 许可证
 
-本项目为 Axeuh Health Monitor 系统的一部分。
+本项目为 LiveLog-AI 系统的一部分。

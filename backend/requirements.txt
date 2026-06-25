@@ -1,4 +1,4 @@
-# Axeuh Health Monitor - 后端依赖
+# LiveLog-AI - 后端依赖
 # 运行环境: conda env axeuh-multi-agent (Python 3.10+)
 #
 # 安装:

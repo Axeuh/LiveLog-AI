@@ -111,7 +111,7 @@ describe('SettingsView', () => {
       const wrapper = mountSettingsView()
       const version = wrapper.find('.version-info')
       expect(version.exists()).toBe(true)
-      expect(version.text()).toContain('Axeuh Health Monitor')
+      expect(version.text()).toContain('LiveLog-AI')
       expect(version.text()).toContain('v1.0.0')
     })
   })
