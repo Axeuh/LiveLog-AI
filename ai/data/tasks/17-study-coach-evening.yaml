@@ -1,0 +1,13 @@
+﻿name: 学习助手_晚
+schedule:
+  daily: "20:00"
+enabled: true
+model: deepseek-v4-flash
+prompt: |-
+  【学习助手】 动态学习协助（晚间复盘）。按子智能体流程执行。
+
+  1. 启动子智能体: task(subagent_type="general", load_skills=[], prompt="请阅读 ai/agents/06-study-coach.md 执行。参数: date={日期}, mode=evening")
+
+  2. 根据子智能体输出的通知文案，用 screen-mcp_send_notification 发通知
+
+  3. 如果子智能体更新了进度记录，自行 git add/commit

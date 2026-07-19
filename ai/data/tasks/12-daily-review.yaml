@@ -1,0 +1,16 @@
+﻿name: 今日复盘
+schedule:
+  daily: "00:30"
+enabled: true
+model: deepseek-v4-flash
+prompt: |-
+  【今日复盘】 按复盘子智能体调度流程执行。
+
+  1. 运行: python ai/analysis/check_coverage.py {昨天日期}
+  2. 启动子智能体: task(subagent_type="general", load_skills=[], prompt="请阅读 ai/agents/02-daily-review.md 执行。参数: date={昨天日期}")
+
+  注意：复盘的目标日期是昨天（不是今天）。
+  3. 子智能体自行验收复盘报告后运行 git add/commit
+  4. 主智能体验收复盘文件
+  5. 检查昨日日志文件 `ai/data/{昨天日期}/日志-{昨天日期}.md` 是否存在，如不存在则写一条简要日志兜底
+  6. 确认完成后压缩上下文（compress工具），释放会话空间，压缩一天的会话内容，确保第二天上下文简短。

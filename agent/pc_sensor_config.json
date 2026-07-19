@@ -1,0 +1,10 @@
+{
+  "enabled": false,
+  "server_url": "https://localhost:8767",
+  "username": "",
+  "password": "",
+  "idle_threshold": 300,
+  "window_enabled": true,
+  "idle_enabled": true,
+  "screen_enabled": true
+}

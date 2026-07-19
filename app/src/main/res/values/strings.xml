@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Axeuh助手-Dev</string>
+    <string name="accessibility_service_description">Axeuh助手 需要无障碍服务来读取屏幕内容并执行自动化操作</string>
+</resources>

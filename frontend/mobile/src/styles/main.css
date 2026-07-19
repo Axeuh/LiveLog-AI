@@ -1,0 +1,10 @@
+@import './variables.css';
+@import './themes/apple-dark.css';
+@import './themes/light.css';
+@import './themes/glacier.css';
+@import './base.css';
+@import './animations.css';
+
+#app {
+  height: 100%;
+}

@@ -1,0 +1,93 @@
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.kotlin/
+
+# 依赖
+node_modules/
+
+# 日志
+*.log
+
+# 临时文件
+*.tmp
+*.temp
+*.npy
+
+# Python
+__pycache__/
+backend/__pycache__/
+backend/routers/__pycache__/
+backend/services/__pycache__/
+*.pyc
+
+# 运行时数据
+ai/data/usersessions.json
+backend/config/auth.json
+backend/usersessions.json
+backend/nul
+frontend/nul
+nul
+
+# API 行为测试快照（含实时数据）
+behavior/snapshots/
+behavior/verify.py
+
+# 构建产物
+app/build/
+*.apk
+*.zip
+*.exe
+dist/
+build/
+
+# Gradle build artifacts
+.gradle/
+app/.gradle/
+app/local.properties
+*.iml
+local.properties
+
+# 配置文件（含敏感信息，不提交）
+backend/config/config.yaml
+backend/config/config.local.yaml
+
+# 环境
+.env
+backend/.env
+
+# ChromaDB / 向量数据库
+**/chroma_db/
+*.sqlite3
+*.db
+
+# 运行时数据
+ai/data/**/事实-全天.md
+ai/data/**/perception.jsonl
+ai/data/**/health.json
+ai/data/**/profile.json
+ai/data/**/*.wav
+ai/data/**/*.jpg
+ai/data/**/*.png
+ai/data/**/*.docx
+ai/data/voice_audio/
+ai/data/uploads/
+ai/data/maps/
+ai/data/截图归档/
+ai/data/voiceprints.json
+ai/data/gps_cache.json
+ai/data/task_executions.yaml
+
+# ML 模型文件（大文件，不提交）
+backend/models/*.pth
+ai/data/**/*.docx
+
+# 实验性项目
+multimodal-demo/

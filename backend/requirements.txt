@@ -1,0 +1,33 @@
+# Axeuh Health Monitor - 后端依赖
+# 运行环境: conda env axeuh-multi-agent (Python 3.10+)
+#
+# 安装:
+#   conda activate axeuh-multi-agent
+#   pip install -r requirements.txt
+#
+# ⚠️ 注意: torch / funasr / modelscope 等 ML 包在 conda 环境中已预装
+# 如果在新环境中安装，需要额外安装:
+#   pip install torch torchaudio --index-url https://download.pytorch.org/whl/cu124
+#   pip install funasr modelscope
+
+# ============ Web 框架 ============
+fastapi>=0.109.0
+uvicorn[standard]>=0.27.0
+websockets>=12.0
+pydantic>=2.5.3
+python-multipart>=0.0.6
+
+# ============ HTTP 客户端 ============
+aiohttp>=3.9.1
+httpx>=0.27.0
+requests>=2.31.0
+
+# ============ 配置 ============
+PyYAML>=6.0
+
+# ============ 认证 ============
+bcrypt>=4.0.0
+
+# ============ 数据处理 ============
+numpy>=1.26.0
+filelock>=3.0.0

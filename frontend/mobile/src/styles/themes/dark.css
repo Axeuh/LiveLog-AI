@@ -1,0 +1,20 @@
+/* themes/dark.css -- Default dark theme */
+:root,
+[data-theme="dark"] {
+  --bg: #0d0d14;
+  --surface: #16161f;
+  --surface2: #1e1e2a;
+  --surface3: #282840;
+  --primary: #6c5ce7;
+  --primary-light: #a29bfe;
+  --accent: #00cec9;
+  --accent2: #fd79a8;
+  --accent3: #fdcb6e;
+  --text: #e8e8f0;
+  --text2: #9898b0;
+  --text3: #5a5a78;
+  --border: rgba(255, 255, 255, 0.06);
+  --radius: 14px;
+  --radius-sm: 10px;
+  --danger: #ff6b6b;
+}

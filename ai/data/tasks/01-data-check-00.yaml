@@ -1,0 +1,13 @@
+﻿name: 数据检查_00点
+schedule:
+  daily: "00:00"
+enabled: false
+prompt: |-
+  【数据检查 - 数据检查_00点】 按子智能体调度流程执行, 覆盖前一天最后2小时: 22:00~00:00。 注意: 日期用前一天(不是今天)。
+
+  不要自己写理解, 按以下流程执行：
+  1. 运行: python ai/analysis/fact_extractor.py 前一天的日期 --hours 22:00~00:00
+  2. 启动子智能体: task(subagent_type="general", load_skills=[], prompt="请阅读 ai/agents/01-data-check.md 执行。参数: date=前一天的日期, start=22:00, end=00:00")
+  3. 运行: python ai/analysis/check_coverage.py 前一天的日期
+  4. 子智能体自行验证覆盖、git commit
+  5. 主智能体验收（不需要发通知）
